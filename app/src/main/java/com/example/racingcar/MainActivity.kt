@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
         val backgroundState = BackgroundState(image = backgroundImageBitmap)
 
         Canvas(modifier = modifier) {
+            ticker
             backgroundState.move(5) //todo change velocity by score
             backgroundState.draw(drawScope = this)
 

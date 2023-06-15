@@ -1,5 +1,6 @@
 package com.example.racingcar
 
+import android.util.Log
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
@@ -12,12 +13,13 @@ data class BackgroundState(val image: ImageBitmap) {
         currentPosY += velocity
     }
 
-    fun draw(drawScope: DrawScope) {
+    fun draw(drawScope: DrawScope, initialPos: Int = 0) {
         drawScope.draw()
     }
 
     private fun DrawScope.draw() {
-        if (currentPosY < -size.width) {
+        Log.d("mamad", "draw: $currentPosY")
+        if (currentPosY > 2 * size.width) { //todo fix lag
             currentPosY = 0
         }
         drawImage(
