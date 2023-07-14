@@ -7,7 +7,11 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -20,11 +24,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.imageResource
 import com.example.racingcar.models.SwipeDirection
 import com.example.racingcar.state.BackgroundState
 import com.example.racingcar.state.BlockState
 import com.example.racingcar.state.CarState
+import kotlin.math.abs
 
 @Composable
 fun RacingCar(modifier: Modifier = Modifier) {
@@ -61,37 +67,58 @@ fun RacingCar(modifier: Modifier = Modifier) {
     val blockState = BlockState(image = blockImageBitmap)
     Log.d("mamad", "RacingCar: ")
 
-    Box(modifier = modifier) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            ticker
-
-            backgroundState.move(velocity = backgroundSpeed)
-            backgroundState.draw(drawScope = this)
-
-            carState.draw(drawScope = this)
-
-            blockState.move(velocity = backgroundSpeed)
-            blockState.draw(drawScope = this)
+    BoxWithConstraints(modifier = modifier) {
+        var offsetX by remember { mutableStateOf(0f) }
+        val minSwipeOffset by remember {
+            mutableStateOf(
+                constraints.maxWidth / 4
+            )
         }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDrag = { change, dragAmount ->
+                            change.consume()
+                            val (x, y) = dragAmount
+                            offsetX += dragAmount.x
 
-        Button(onClick = {
-            carState.move(SwipeDirection.Left)
-        }) {
-            Text(text = "left")
-        }
-        Button(
-            onClick = {
-                carState.move(SwipeDirection.Right)
-            },
-            modifier = Modifier.align(Alignment.TopEnd)
+                        },
+                        onDragEnd = {
+                            when {
+                                (offsetX < 0F && abs(offsetX) > minSwipeOffset) -> {
+                                    carState.move(SwipeDirection.Left)
+                                }
+
+                                (offsetX > 0 && abs(offsetX) > minSwipeOffset) -> {
+                                    carState.move(SwipeDirection.Right)
+                                }
+
+                                else -> {}
+                            }
+                            offsetX = 0F
+                        }
+                    )
+                }
         ) {
-            Text(text = "right")
-        }
-        Text(
-            text = "score: $gameScore",
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                ticker
 
+                backgroundState.move(velocity = backgroundSpeed)
+                backgroundState.draw(drawScope = this)
+
+                carState.draw(drawScope = this)
+
+                blockState.move(velocity = backgroundSpeed)
+                blockState.draw(drawScope = this)
+            }
+
+            Text(
+                text = "score: $gameScore",
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
     }
+
 }
-    
