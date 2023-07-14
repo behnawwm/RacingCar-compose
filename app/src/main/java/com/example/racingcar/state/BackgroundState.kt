@@ -1,4 +1,4 @@
-package com.example.racingcar
+package com.example.racingcar.state
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope

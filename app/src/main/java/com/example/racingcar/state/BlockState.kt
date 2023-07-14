@@ -1,10 +1,10 @@
-package com.example.racingcar
+package com.example.racingcar.state
 
 import android.util.Log
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
+import com.example.racingcar.models.Blocker
 import com.example.racingcar.Constants.LANE_COUNT
 import com.example.racingcar.Constants.STREET_SIDE_PERCENTAGE_EACH
 

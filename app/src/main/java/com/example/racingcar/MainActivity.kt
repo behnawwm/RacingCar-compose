@@ -26,6 +26,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
+import com.example.racingcar.Constants.GAME_SCORE_TO_VELOCITY_RATIO
+import com.example.racingcar.Constants.INITIAL_VELOCITY
+import com.example.racingcar.models.SwipeDirection
+import com.example.racingcar.state.BackgroundState
+import com.example.racingcar.state.BlockState
+import com.example.racingcar.state.CarState
 import com.example.racingcar.ui.theme.RacingCarTheme
 
 
@@ -42,79 +48,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    @Composable
-    fun RacingCar(modifier: Modifier = Modifier) {
-        // resources
-        val backgroundImageBitmap = ImageBitmap.imageResource(id = R.drawable.bg_road_night)
-        val carImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_car)
-        val blockImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_block_night)
-
-        // states
-        var gameScore by remember {
-            mutableStateOf(0)
-        }
-        val backgroundSpeed by remember {
-            derivedStateOf {
-                (gameScore / GAME_SCORE_TO_VELOCITY_RATIO) + INITIAL_VELOCITY
-            }
-        }
-
-        // animation
-        val infiniteTransition = rememberInfiniteTransition(label = "infinite")
-
-        val ticker by infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 250, easing = LinearEasing)
-            ),
-            label = "ticker"
-        )
-
-        val backgroundState =
-            BackgroundState(image = backgroundImageBitmap, onGameScoreIncrease = { gameScore++ })
-        val carState = CarState(image = carImageBitmap)
-        val blockState = BlockState(image = blockImageBitmap)
-        Log.d("mamad", "RacingCar: ")
-
-        Box(modifier = modifier) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                ticker
-
-                backgroundState.move(velocity = backgroundSpeed)
-                backgroundState.draw(drawScope = this)
-
-                carState.draw(drawScope = this)
-
-                blockState.move(velocity = backgroundSpeed)
-                blockState.draw(drawScope = this)
-            }
-
-            Button(onClick = {
-                carState.move(SwipeDirection.Left)
-            }) {
-                Text(text = "left")
-            }
-            Button(
-                onClick = {
-                    carState.move(SwipeDirection.Right)
-                },
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
-                Text(text = "right")
-            }
-            Text(
-                text = "score: $gameScore",
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
-
-        }
-    }
-
-    companion object {
-        const val INITIAL_VELOCITY = 5
-        const val GAME_SCORE_TO_VELOCITY_RATIO = 2
     }
 }

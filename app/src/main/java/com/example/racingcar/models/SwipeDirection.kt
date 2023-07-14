@@ -1,4 +1,4 @@
-package com.example.racingcar
+package com.example.racingcar.models
 
 enum class SwipeDirection {
     Right, Left
