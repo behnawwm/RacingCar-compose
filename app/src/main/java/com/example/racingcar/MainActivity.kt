@@ -6,16 +6,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,17 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import com.example.racingcar.ui.theme.RacingCarTheme
 
-private const val BACKGROUND_VELOCITY = 50
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +49,7 @@ class MainActivity : ComponentActivity() {
         // resources
         val backgroundImageBitmap = ImageBitmap.imageResource(id = R.drawable.bg_road_night)
         val carImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_car)
+        val blockImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_block_night)
 
         // states
         var gameScore by remember {
@@ -67,7 +57,7 @@ class MainActivity : ComponentActivity() {
         }
         val backgroundSpeed by remember {
             derivedStateOf {
-                gameScore + 5
+                (gameScore / GAME_SCORE_TO_VELOCITY_RATIO) + INITIAL_VELOCITY
             }
         }
 
@@ -83,19 +73,25 @@ class MainActivity : ComponentActivity() {
             label = "ticker"
         )
 
-        val backgroundState = BackgroundState(image = backgroundImageBitmap)
+        val backgroundState =
+            BackgroundState(image = backgroundImageBitmap, onGameScoreIncrease = { gameScore++ })
         val carState = CarState(image = carImageBitmap)
+        val blockState = BlockState(image = blockImageBitmap)
+        Log.d("mamad", "RacingCar: ")
 
         Box(modifier = modifier) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 ticker
+
                 backgroundState.move(velocity = backgroundSpeed)
                 backgroundState.draw(drawScope = this)
 
                 carState.draw(drawScope = this)
+
+                blockState.move(velocity = backgroundSpeed)
+                blockState.draw(drawScope = this)
             }
 
-            //todo state change not working
             Button(onClick = {
                 carState.move(SwipeDirection.Left)
             }) {
@@ -109,7 +105,16 @@ class MainActivity : ComponentActivity() {
             ) {
                 Text(text = "right")
             }
+            Text(
+                text = "score: $gameScore",
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
 
         }
+    }
+
+    companion object {
+        const val INITIAL_VELOCITY = 5
+        const val GAME_SCORE_TO_VELOCITY_RATIO = 2
     }
 }
