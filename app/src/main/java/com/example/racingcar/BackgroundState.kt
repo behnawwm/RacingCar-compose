@@ -1,12 +1,11 @@
 package com.example.racingcar
 
-import android.util.Log
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 
-data class BackgroundState(val image: ImageBitmap, val initialPos: Int = 0) {
+data class BackgroundState(val image: ImageBitmap, val initialPos: Int = 0, val onGameScoreIncrease: () -> Unit) {
     private var currentPosY = initialPos
 
     fun move(velocity: Int) {
@@ -17,6 +16,7 @@ data class BackgroundState(val image: ImageBitmap, val initialPos: Int = 0) {
         drawScope.apply {
             if (currentPosY > size.height - 5) { // 5 is added because of a flicker between position resets
                 currentPosY = 0
+                onGameScoreIncrease()
             }
             drawImage(
                 image = image,
