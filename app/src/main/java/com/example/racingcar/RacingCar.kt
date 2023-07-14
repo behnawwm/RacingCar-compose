@@ -83,20 +83,16 @@ fun RacingCar(modifier: Modifier = Modifier) {
                             change.consume()
                             val (x, y) = dragAmount
                             offsetX += dragAmount.x
-
                         },
                         onDragEnd = {
                             when {
-                                (offsetX < 0F && abs(offsetX) > minSwipeOffset) -> {
-                                    carState.move(SwipeDirection.Left)
-                                }
-
-                                (offsetX > 0 && abs(offsetX) > minSwipeOffset) -> {
-                                    carState.move(SwipeDirection.Right)
-                                }
-
-                                else -> {}
+                                (offsetX < 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Left
+                                (offsetX > 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Right
+                                else -> null
+                            }?.let { direction ->
+                                carState.move(direction)
                             }
+
                             offsetX = 0F
                         }
                     )
