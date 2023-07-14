@@ -18,7 +18,6 @@ data class BackgroundState(val image: ImageBitmap) {
     }
 
     private fun DrawScope.draw() {
-        Log.d("mamad", "draw: $currentPosY")
         if (currentPosY > 2 * size.width) { //todo fix lag
             currentPosY = 0
         }
