@@ -84,14 +84,12 @@ class MainActivity : ComponentActivity() {
         )
 
         val backgroundState = BackgroundState(image = backgroundImageBitmap)
-        var carState by remember {
-            mutableStateOf(CarState(image = carImageBitmap))
-        }
+        val carState = CarState(image = carImageBitmap)
 
         Box(modifier = modifier) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 ticker
-                backgroundState.move(backgroundSpeed)
+                backgroundState.move(velocity = backgroundSpeed)
                 backgroundState.draw(drawScope = this)
 
                 carState.draw(drawScope = this, initialState = CarPosition.Left)

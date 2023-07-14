@@ -1,9 +1,5 @@
 package com.example.racingcar
 
-import android.util.Log
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
@@ -49,11 +45,11 @@ data class CarState(val image: ImageBitmap) {
         val carSize = 208 //size.width.toInt() * STREET_SIDE_PERCENTAGE_EACH / 100
 
         val blockerOffsetX = (size.width.toInt() * STREET_SIDE_PERCENTAGE_EACH / 100)
-        val laneOffsetX = (size.width.toInt() * (100 - (2 * STREET_SIDE_PERCENTAGE_EACH)) / 100) / 3
+        val laneSize = (size.width.toInt() * (100 - (2 * STREET_SIDE_PERCENTAGE_EACH)) / 100) / LANE_COUNT
         val carOffsetX =
             blockerOffsetX +
-                    (laneOffsetX / 2) - (carSize / 2) +
-                    (laneOffsetX * position.fromLeftOffsetIndex())
+                    (laneSize / 2) - (carSize / 2) +
+                    (laneSize * position.fromLeftOffsetIndex())
 
 //        drawRect(
 //            color = Color.Red,
@@ -76,5 +72,6 @@ data class CarState(val image: ImageBitmap) {
 
     companion object {
         const val STREET_SIDE_PERCENTAGE_EACH = 9  // approximate percentage
+        const val LANE_COUNT = 3
     }
 }

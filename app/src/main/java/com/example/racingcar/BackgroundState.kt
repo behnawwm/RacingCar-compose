@@ -18,7 +18,7 @@ data class BackgroundState(val image: ImageBitmap) {
     }
 
     private fun DrawScope.draw() {
-        if (currentPosY > 2 * size.width) { //todo fix lag
+        if (currentPosY > size.height - 5) { // 5 is added because of a lag between position resets
             currentPosY = 0
         }
         drawImage(
