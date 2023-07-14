@@ -92,21 +92,23 @@ class MainActivity : ComponentActivity() {
                 backgroundState.move(velocity = backgroundSpeed)
                 backgroundState.draw(drawScope = this)
 
-                carState.draw(drawScope = this, initialState = CarPosition.Left)
+                carState.draw(drawScope = this)
             }
 
             //todo state change not working
-//            Button(onClick = {
-//                carState.move(SwipeDirection.Left)
-//            }) {
-//                Text(text = "left")
-//            }
-//            Button(
-//                onClick = { carState.move(SwipeDirection.Right) },
-//                modifier = Modifier.align(Alignment.TopEnd)
-//            ) {
-//                Text(text = "right")
-//            }
+            Button(onClick = {
+                carState.move(SwipeDirection.Left)
+            }) {
+                Text(text = "left")
+            }
+            Button(
+                onClick = {
+                    carState.move(SwipeDirection.Right)
+                },
+                modifier = Modifier.align(Alignment.TopEnd)
+            ) {
+                Text(text = "right")
+            }
 
         }
     }
