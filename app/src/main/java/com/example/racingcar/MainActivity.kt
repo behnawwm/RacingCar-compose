@@ -44,7 +44,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RacingCar(modifier = Modifier.fillMaxSize())
+                    RacingCar(
+                        isDevMode = true,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }

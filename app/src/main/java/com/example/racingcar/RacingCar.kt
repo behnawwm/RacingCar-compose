@@ -33,7 +33,7 @@ import com.example.racingcar.state.CarState
 import kotlin.math.abs
 
 @Composable
-fun RacingCar(modifier: Modifier = Modifier) {
+fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
     // resources
     val backgroundImageBitmap = ImageBitmap.imageResource(id = R.drawable.bg_road_night)
     val carImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_car)
@@ -114,6 +114,10 @@ fun RacingCar(modifier: Modifier = Modifier) {
                 text = "score: $gameScore",
                 modifier = Modifier.align(Alignment.TopCenter)
             )
+            if (isDevMode)
+                Button(onClick = { gameScore = 0 }) {
+                    Text(text = "reset score")
+                }
         }
     }
 
