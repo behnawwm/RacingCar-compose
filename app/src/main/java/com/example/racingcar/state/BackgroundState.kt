@@ -5,7 +5,11 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 
-data class BackgroundState(val image: ImageBitmap, val initialPos: Int = 0, val onGameScoreIncrease: () -> Unit) {
+data class BackgroundState(
+    val image: ImageBitmap,
+    val onGameScoreIncrease: () -> Unit,
+    val initialPos: Int = 0,
+) {
     private var currentPosY = initialPos
 
     fun move(velocity: Int) {
@@ -14,7 +18,7 @@ data class BackgroundState(val image: ImageBitmap, val initialPos: Int = 0, val 
 
     fun draw(drawScope: DrawScope) {
         drawScope.apply {
-            if (currentPosY > size.height - 5) { // 5 is added because of a flicker between position resets
+            if (currentPosY > size.height) {
                 currentPosY = 0
                 onGameScoreIncrease()
             }

@@ -8,8 +8,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.imageResource
+import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
 import com.example.racingcar.models.SwipeDirection
 import com.example.racingcar.state.BackgroundState
 import com.example.racingcar.state.BlockState
@@ -56,7 +55,7 @@ fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 250, easing = LinearEasing)
+            animation = tween(durationMillis = TICKER_ANIMATION_DURATION, easing = LinearEasing)
         ),
         label = "ticker"
     )

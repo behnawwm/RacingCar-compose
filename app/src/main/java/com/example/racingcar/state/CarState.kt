@@ -4,15 +4,18 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import com.example.racingcar.Constants.CAR_POSITION_PERCENTAGE_FROM_BOTTOM
 import com.example.racingcar.Constants.CAR_SIZE
-import com.example.racingcar.models.CarPosition
-import com.example.racingcar.models.CarPosition.*
 import com.example.racingcar.Constants.LANE_COUNT
 import com.example.racingcar.Constants.STREET_SIDE_PERCENTAGE_EACH
+import com.example.racingcar.models.CarPosition
+import com.example.racingcar.models.CarPosition.Left
+import com.example.racingcar.models.CarPosition.Middle
+import com.example.racingcar.models.CarPosition.Right
 import com.example.racingcar.models.SwipeDirection
 
 data class CarState(val image: ImageBitmap, val initialState: CarPosition = Middle) {
-    private var currentPosX: Int = Middle.fromLeftOffsetIndex()
+    //    private var currentPos: Int = Middle.fromLeftOffsetIndex()
     var position: CarPosition = Middle
         private set
 
@@ -54,7 +57,7 @@ data class CarState(val image: ImageBitmap, val initialState: CarPosition = Midd
                 image = image,
                 dstOffset = IntOffset(
                     x = carOffsetX,
-                    y = size.height.toInt() - 500 //todo change to percent
+                    y = size.height.toInt() - (size.height.toInt() * CAR_POSITION_PERCENTAGE_FROM_BOTTOM / 100)
                 ),
                 dstSize = IntSize(width = CAR_SIZE, height = CAR_SIZE)
             )
