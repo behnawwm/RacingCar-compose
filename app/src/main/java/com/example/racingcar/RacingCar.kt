@@ -1,6 +1,5 @@
 package com.example.racingcar
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -24,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.imageResource
+import com.example.racingcar.Constants.INITIAL_GAME_SCORE
+import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
 import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
 import com.example.racingcar.models.SwipeDirection
 import com.example.racingcar.state.BackgroundState
@@ -40,15 +41,19 @@ fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
 
     // states
     var gameScore by remember {
-        mutableStateOf(0)
+        mutableStateOf(INITIAL_GAME_SCORE)
     }
     val backgroundSpeed by remember {
         derivedStateOf {
             (gameScore / Constants.GAME_SCORE_TO_VELOCITY_RATIO) + Constants.INITIAL_VELOCITY
         }
     }
+    val backgroundState =
+        BackgroundState(image = backgroundImageBitmap, onGameScoreIncrease = { gameScore++ })
+    val carState = CarState(image = carImageBitmap)
+    val blockState = BlockState(image = blockImageBitmap)
 
-    // animation
+    // ticker
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
 
     val ticker by infiniteTransition.animateFloat(
@@ -60,18 +65,10 @@ fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
         label = "ticker"
     )
 
-    val backgroundState =
-        BackgroundState(image = backgroundImageBitmap, onGameScoreIncrease = { gameScore++ })
-    val carState = CarState(image = carImageBitmap)
-    val blockState = BlockState(image = blockImageBitmap)
-    Log.d("mamad", "RacingCar: ")
-
     BoxWithConstraints(modifier = modifier) {
         var offsetX by remember { mutableStateOf(0f) }
         val minSwipeOffset by remember {
-            mutableStateOf(
-                constraints.maxWidth / 4
-            )
+            mutableStateOf(constraints.maxWidth / SWIPE_MIN_OFFSET_FROM_MAX_WIDTH)
         }
         Box(
             modifier = Modifier
