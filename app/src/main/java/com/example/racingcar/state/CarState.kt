@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import com.example.racingcar.Constants.CAR_SIZE
 import com.example.racingcar.models.CarPosition
 import com.example.racingcar.models.CarPosition.*
 import com.example.racingcar.Constants.LANE_COUNT
@@ -41,24 +42,21 @@ data class CarState(val image: ImageBitmap, val initialState: CarPosition = Midd
 
     fun draw(drawScope: DrawScope) { //todo calculate `size` once per init
         drawScope.apply {
-            //todo change based on size.width
-            val carSize = 208 //size.width.toInt() * STREET_SIDE_PERCENTAGE_EACH / 100
             val initialOffsetX = (size.width.toInt() * STREET_SIDE_PERCENTAGE_EACH / 100)
             val laneSize =
                 (size.width.toInt() * (100 - (2 * STREET_SIDE_PERCENTAGE_EACH)) / 100) / LANE_COUNT
             val carOffsetX =
                 initialOffsetX +
-                        (laneSize / 2) - (carSize / 2) +
+                        (laneSize / 2) - (CAR_SIZE / 2) +
                         (laneSize * position.fromLeftOffsetIndex())
 
             drawImage(
-                //todo make car bigger
                 image = image,
                 dstOffset = IntOffset(
                     x = carOffsetX,
                     y = size.height.toInt() - 500 //todo change to percent
                 ),
-                srcSize = IntSize(carSize, carSize)
+                dstSize = IntSize(width = CAR_SIZE, height = CAR_SIZE)
             )
         }
     }
