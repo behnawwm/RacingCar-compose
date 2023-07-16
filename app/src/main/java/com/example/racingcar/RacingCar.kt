@@ -100,10 +100,10 @@ fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
                 backgroundState.move(velocity = backgroundSpeed)
                 backgroundState.draw(drawScope = this)
 
-                carState.draw(drawScope = this)
-
                 blockState.move(velocity = backgroundSpeed)
                 blockState.draw(drawScope = this)
+
+                carState.draw(drawScope = this)
             }
 
             Text(

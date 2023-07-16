@@ -10,6 +10,7 @@ object Constants {
 
     // positioning
     const val CAR_POSITION_PERCENTAGE_FROM_BOTTOM = 20
+    const val BLOCKER_INTERSPACE_PERCENTAGE = 25
     const val STREET_SIDE_PERCENTAGE_EACH = 9  // approximate percentage
 
     // asset size
