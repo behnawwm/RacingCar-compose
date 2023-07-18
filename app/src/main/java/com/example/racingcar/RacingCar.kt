@@ -30,7 +30,7 @@ import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
 import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
 import com.example.racingcar.models.SwipeDirection
 import com.example.racingcar.state.BackgroundState
-import com.example.racingcar.state.BlockState2
+import com.example.racingcar.state.BlockState
 import com.example.racingcar.state.CarState
 import kotlin.math.abs
 import kotlin.random.Random
@@ -57,7 +57,7 @@ fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
 
     val blockersCount = 100 / BLOCKER_INTERSPACE_PERCENTAGE
     val blockers = (1..blockersCount).map {
-        BlockState2(
+        BlockState(
             image = blockImageBitmap,
             lanePosition = Random.nextInt(from = 0, until = LANE_COUNT)
         )
