@@ -23,7 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.imageResource
+import com.example.racingcar.Constants.BLOCKER_INTERSPACE_PERCENTAGE
 import com.example.racingcar.Constants.INITIAL_GAME_SCORE
+import com.example.racingcar.Constants.LANE_COUNT
 import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
 import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
 import com.example.racingcar.models.SwipeDirection
@@ -31,6 +33,7 @@ import com.example.racingcar.state.BackgroundState
 import com.example.racingcar.state.BlockState
 import com.example.racingcar.state.CarState
 import kotlin.math.abs
+import kotlin.random.Random
 
 @Composable
 fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
@@ -51,7 +54,14 @@ fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
     val backgroundState =
         BackgroundState(image = backgroundImageBitmap, onGameScoreIncrease = { gameScore++ })
     val carState = CarState(image = carImageBitmap)
-    val blockState = BlockState(image = blockImageBitmap)
+
+    val blockersCount = 100 / BLOCKER_INTERSPACE_PERCENTAGE
+    val blockers = (1..blockersCount).map {
+        BlockState(
+            image = blockImageBitmap,
+            lanePosition = Random.nextInt(from = 0, until = LANE_COUNT)
+        )
+    }
 
     // ticker
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
@@ -100,8 +110,10 @@ fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
                 backgroundState.move(velocity = backgroundSpeed)
                 backgroundState.draw(drawScope = this)
 
-                blockState.move(velocity = backgroundSpeed)
-                blockState.draw(drawScope = this)
+                blockers.forEachIndexed { index, blockState ->
+                    blockState.move(velocity = backgroundSpeed)
+                    blockState.draw(drawScope = this, index = index)
+                }
 
                 carState.draw(drawScope = this)
             }
