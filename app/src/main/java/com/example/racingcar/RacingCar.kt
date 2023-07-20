@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +37,11 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 @Composable
-fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
+fun RacingCar(
+    viewModel: MainViewModel,
+    isDevMode: Boolean,
+    modifier: Modifier = Modifier,
+) {
     // resources
     val backgroundImageBitmap = ImageBitmap.imageResource(id = R.drawable.bg_road_night)
     val carImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_car)
@@ -76,10 +81,17 @@ fun RacingCar(isDevMode: Boolean, modifier: Modifier = Modifier) {
     )
 
     BoxWithConstraints(modifier = modifier) {
+        val mamad by viewModel.accelerationX.collectAsState() //todo add collectAsStateWithLifecycle()
+
         var offsetX by remember { mutableStateOf(0f) }
         val minSwipeOffset by remember {
             mutableStateOf(constraints.maxWidth / SWIPE_MIN_OFFSET_FROM_MAX_WIDTH)
         }
+        if (mamad > 2f) {
+            carState.move(SwipeDirection.Left)
+        } else if (mamad < -2f)
+            carState.move(SwipeDirection.Right)
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
