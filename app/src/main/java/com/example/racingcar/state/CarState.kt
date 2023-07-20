@@ -14,10 +14,7 @@ import com.example.racingcar.models.CarPosition.Middle
 import com.example.racingcar.models.CarPosition.Right
 import com.example.racingcar.models.SwipeDirection
 
-data class CarState(val image: ImageBitmap, val initialState: CarPosition = Middle) {
-    //    private var currentPos: Int = Middle.fromLeftOffsetIndex()
-    var position: CarPosition = Middle
-        private set
+data class CarState(val image: ImageBitmap, var position: CarPosition = Middle) {
 
     fun move(direction: SwipeDirection) {
         when (direction) {
