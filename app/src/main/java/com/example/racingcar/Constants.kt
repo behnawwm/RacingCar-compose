@@ -6,12 +6,14 @@ object Constants {
     const val INITIAL_VELOCITY = 5
     const val GAME_SCORE_TO_VELOCITY_RATIO = 2
     const val INITIAL_GAME_SCORE = 0
-    const val SWIPE_MIN_OFFSET_FROM_MAX_WIDTH = 4 //todo rename
+    const val SWIPE_MIN_OFFSET_FROM_MAX_WIDTH = 6 //todo rename
+    const val ACCELERATION_X_Y_OFFSET_TRIGGER = 15
+    const val DEFAULT_ACCELEROMETER_SENSITIVITY = 1
 
     // positioning
     const val CAR_POSITION_PERCENTAGE_FROM_BOTTOM = 20
     const val BLOCKER_INTERSPACE_PERCENTAGE = 25
-    const val STREET_SIDE_PERCENTAGE_EACH = 9  // approximate percentage
+    const val STREET_SIDE_PERCENTAGE_EACH = 9  // approximate percentage based on current road!
 
     // asset size
     const val BLOCKER_HEIGHT = 63

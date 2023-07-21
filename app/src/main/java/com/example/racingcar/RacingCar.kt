@@ -29,6 +29,7 @@ import com.example.racingcar.Constants.INITIAL_GAME_SCORE
 import com.example.racingcar.Constants.LANE_COUNT
 import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
 import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
+import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.SwipeDirection
 import com.example.racingcar.state.BackgroundState
 import com.example.racingcar.state.BlockState
@@ -81,16 +82,22 @@ fun RacingCar(
     )
 
     BoxWithConstraints(modifier = modifier) {
-        val mamad by viewModel.accelerationX.collectAsState() //todo add collectAsStateWithLifecycle()
+        //todo add collectAsStateWithLifecycle()
+        val acceleration by viewModel.acceleration.collectAsState(
+            initial = AccelerationData(
+                0f,
+                0f,
+                0f
+            )
+        )
+
+        carState.moveWithAcceleration(acceleration)
 
         var offsetX by remember { mutableStateOf(0f) }
         val minSwipeOffset by remember {
             mutableStateOf(constraints.maxWidth / SWIPE_MIN_OFFSET_FROM_MAX_WIDTH)
         }
-        if (mamad > 2f) {
-            carState.move(SwipeDirection.Left)
-        } else if (mamad < -2f)
-            carState.move(SwipeDirection.Right)
+
 
         Box(
             modifier = Modifier

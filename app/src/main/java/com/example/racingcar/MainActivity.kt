@@ -6,7 +6,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -45,7 +44,11 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     override fun onResume() {
         super.onResume()
         //todo add toggle for turning off
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)
+        sensorManager.registerListener(
+            this,
+            accelerometer,
+            SensorManager.SENSOR_DELAY_UI
+        ) // SENSOR_DELAY_GAME was too much!
     }
 
     override fun onPause() {
@@ -54,24 +57,11 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        Log.d("mamad", "onSensorChanged: x: ${event.values[0]}")
-        // Get the acceleration along the X-axis
         val accelerationX = event.values[0]
+        val accelerationY = event.values[1]
+        val accelerationZ = event.values[2]
 
-        viewModel.setAccelerationX(accelerationX)
-
-
-//        // Adjust the car's position based on the accelerometer data
-//        carXPosition.value -= accelerationX * 2.0f // Adjust the sensitivity as needed
-//
-//        // Limit the car's movement within the screen boundaries (left and right lanes)
-//        val screenWidth = resources.displayMetrics.widthPixels
-//        if (carXPosition.value < 0) {
-//            carXPosition.value = 0f
-//        } else if (carXPosition.value > screenWidth) {
-//            carXPosition.value = screenWidth.toFloat()
-//        }
-
+        viewModel.setAcceleration(accelerationX, accelerationY, accelerationZ)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}

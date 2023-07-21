@@ -4,10 +4,12 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import com.example.racingcar.Constants.ACCELERATION_X_Y_OFFSET_TRIGGER
 import com.example.racingcar.Constants.CAR_POSITION_PERCENTAGE_FROM_BOTTOM
 import com.example.racingcar.Constants.CAR_SIZE
 import com.example.racingcar.Constants.LANE_COUNT
 import com.example.racingcar.Constants.STREET_SIDE_PERCENTAGE_EACH
+import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.CarPosition
 import com.example.racingcar.models.CarPosition.Left
 import com.example.racingcar.models.CarPosition.Middle
@@ -59,6 +61,16 @@ data class CarState(val image: ImageBitmap, var position: CarPosition = Middle) 
                 dstSize = IntSize(width = CAR_SIZE, height = CAR_SIZE)
             )
         }
+    }
+
+    fun moveWithAcceleration(acceleration: AccelerationData) {
+        val ratio = acceleration.x * acceleration.y
+        position = if (ratio > ACCELERATION_X_Y_OFFSET_TRIGGER)
+            Left
+        else if (ratio < -ACCELERATION_X_Y_OFFSET_TRIGGER)
+            Right
+        else
+            Middle
     }
 
 }
