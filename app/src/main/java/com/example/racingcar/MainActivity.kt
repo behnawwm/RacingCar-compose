@@ -6,6 +6,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -13,8 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.racingcar.models.MovementInput.Accelerometer
+import com.example.racingcar.models.MovementInput.Swipe
 import com.example.racingcar.ui.theme.RacingCarTheme
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity(), SensorEventListener {
@@ -23,9 +29,10 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     private val sensorManager by lazy { getSystemService(Context.SENSOR_SERVICE) as SensorManager }
     private val accelerometer by lazy { sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) }
 
-    @OptIn(ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setupCollectors()
 
         setContent {
             RacingCarTheme {
@@ -38,22 +45,49 @@ class MainActivity : ComponentActivity(), SensorEventListener {
             }
         }
     }
+
+    private fun setupCollectors() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.movementInput.collect {
+                    when (it) {
+                        Swipe -> {
+                            unregisterAccelerometer()
+                        }
+
+                        Accelerometer -> {
+                            registerAccelerometer()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        //todo add toggle for turning off
+        registerAccelerometer()
+    }
+
+    private fun registerAccelerometer() {
         sensorManager.registerListener(
             this,
             accelerometer,
-            SensorManager.SENSOR_DELAY_UI
-        ) // SENSOR_DELAY_GAME was too much!
+            SensorManager.SENSOR_DELAY_UI   // SENSOR_DELAY_GAME was too much!
+        )
+    }
+
+    private fun unregisterAccelerometer() {
+        sensorManager.unregisterListener(this)
     }
 
     override fun onPause() {
         super.onPause()
-        sensorManager.unregisterListener(this)
+        unregisterAccelerometer()
     }
 
     override fun onSensorChanged(event: SensorEvent) {
+        Log.d("mamad", "onSensorChanged: ${event.values[0]}")
         val accelerationX = event.values[0]
         val accelerationY = event.values[1]
         val accelerationZ = event.values[2]
