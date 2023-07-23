@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.racingcar.ui.theme.RacingCarTheme
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 
 
 class MainActivity : ComponentActivity(), SensorEventListener {
@@ -22,6 +23,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     private val sensorManager by lazy { getSystemService(Context.SENSOR_SERVICE) as SensorManager }
     private val accelerometer by lazy { sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) }
 
+    @OptIn(ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,16 +33,11 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    RacingCar(
-                        viewModel = viewModel,
-                        isDevMode = true,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    RacingCarGameNavHost(viewModel)
                 }
             }
         }
     }
-
     override fun onResume() {
         super.onResume()
         //todo add toggle for turning off

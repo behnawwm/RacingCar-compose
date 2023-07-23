@@ -1,4 +1,4 @@
-package com.example.racingcar
+package com.example.racingcar.ui.game
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -9,10 +9,14 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.Switch
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,18 +28,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.dp
+import com.example.racingcar.Constants
 import com.example.racingcar.Constants.BLOCKER_INTERSPACE_PERCENTAGE
 import com.example.racingcar.Constants.INITIAL_GAME_SCORE
 import com.example.racingcar.Constants.LANE_COUNT
 import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
 import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
-import com.example.racingcar.models.MovementInput.*
+import com.example.racingcar.MainViewModel
+import com.example.racingcar.R
+import com.example.racingcar.models.MovementInput.Accelerometer
+import com.example.racingcar.models.MovementInput.Swipe
 import com.example.racingcar.models.SwipeDirection
-import com.example.racingcar.state.BackgroundState
-import com.example.racingcar.state.BlockState
-import com.example.racingcar.state.CarState
+import com.example.racingcar.ui.game.state.BackgroundState
+import com.example.racingcar.ui.game.state.BlockState
+import com.example.racingcar.ui.game.state.CarState
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -43,6 +53,7 @@ import kotlin.random.Random
 fun RacingCar(
     viewModel: MainViewModel,
     isDevMode: Boolean,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // resources
@@ -70,9 +81,6 @@ fun RacingCar(
             lanePosition = Random.nextInt(from = 0, until = LANE_COUNT)
         )
     }
-    var movementInput by remember {
-        mutableStateOf(Accelerometer)
-    }
 
     // ticker
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
@@ -88,6 +96,7 @@ fun RacingCar(
 
     BoxWithConstraints(modifier = modifier) {
         val acceleration by viewModel.acceleration.collectAsState()
+        val movementInput by viewModel.movementInput.collectAsState()
 
         if (movementInput == Accelerometer)
             carState.moveWithAcceleration(acceleration)
@@ -151,19 +160,18 @@ fun RacingCar(
                     Text(text = "reset")
                 }
             }
-            Column(
-                modifier = Modifier.align(Alignment.TopEnd),
+            Button(
+                onClick = onSettingsClick,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(4.dp)
             ) {
-                Switch(
-                    checked = movementInput == Accelerometer,
-                    onCheckedChange = {
-                        movementInput = if (it)
-                            Accelerometer
-                        else
-                            Swipe
-                    },
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Filled.Settings),
+                    contentDescription = "settings"
                 )
-                Text(text = movementInput.name)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Settings")
             }
 
         }
