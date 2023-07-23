@@ -9,8 +9,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,7 +31,7 @@ import com.example.racingcar.Constants.INITIAL_GAME_SCORE
 import com.example.racingcar.Constants.LANE_COUNT
 import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
 import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
-import com.example.racingcar.models.AccelerationData
+import com.example.racingcar.models.MovementInput.*
 import com.example.racingcar.models.SwipeDirection
 import com.example.racingcar.state.BackgroundState
 import com.example.racingcar.state.BlockState
@@ -68,6 +70,9 @@ fun RacingCar(
             lanePosition = Random.nextInt(from = 0, until = LANE_COUNT)
         )
     }
+    var movementInput by remember {
+        mutableStateOf(Accelerometer)
+    }
 
     // ticker
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
@@ -82,16 +87,10 @@ fun RacingCar(
     )
 
     BoxWithConstraints(modifier = modifier) {
-        //todo add collectAsStateWithLifecycle()
-        val acceleration by viewModel.acceleration.collectAsState(
-            initial = AccelerationData(
-                0f,
-                0f,
-                0f
-            )
-        )
+        val acceleration by viewModel.acceleration.collectAsState()
 
-        carState.moveWithAcceleration(acceleration)
+        if (movementInput == Accelerometer)
+            carState.moveWithAcceleration(acceleration)
 
         var offsetX by remember { mutableStateOf(0f) }
         val minSwipeOffset by remember {
@@ -102,26 +101,32 @@ fun RacingCar(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDrag = { change, dragAmount ->
-                            change.consume()
-                            val (x, y) = dragAmount
-                            offsetX += dragAmount.x
-                        },
-                        onDragEnd = {
-                            when {
-                                (offsetX < 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Left
-                                (offsetX > 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Right
-                                else -> null
-                            }?.let { direction ->
-                                carState.move(direction)
-                            }
+                .then(
+                    when (movementInput) {
+                        Swipe -> Modifier.pointerInput(Unit) {
+                            detectDragGestures(
+                                onDrag = { change, dragAmount ->
+                                    change.consume()
+                                    val (x, y) = dragAmount
+                                    offsetX += dragAmount.x
+                                },
+                                onDragEnd = {
+                                    when {
+                                        (offsetX < 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Left
+                                        (offsetX > 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Right
+                                        else -> null
+                                    }?.let { direction ->
+                                        carState.move(direction)
+                                    }
 
-                            offsetX = 0F
+                                    offsetX = 0F
+                                }
+                            )
                         }
-                    )
-                }
+
+                        Accelerometer -> Modifier
+                    }
+                )
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 ticker
@@ -141,10 +146,26 @@ fun RacingCar(
                 text = "score: $gameScore",
                 modifier = Modifier.align(Alignment.TopCenter)
             )
-            if (isDevMode)
+            if (isDevMode) {
                 Button(onClick = { gameScore = 0 }) {
-                    Text(text = "reset score")
+                    Text(text = "reset")
                 }
+            }
+            Column(
+                modifier = Modifier.align(Alignment.TopEnd),
+            ) {
+                Switch(
+                    checked = movementInput == Accelerometer,
+                    onCheckedChange = {
+                        movementInput = if (it)
+                            Accelerometer
+                        else
+                            Swipe
+                    },
+                )
+                Text(text = movementInput.name)
+            }
+
         }
     }
 

@@ -64,6 +64,7 @@ data class CarState(val image: ImageBitmap, var position: CarPosition = Middle) 
     }
 
     fun moveWithAcceleration(acceleration: AccelerationData) {
+        //todo not working when phone is on a surface (x=0?)
         val ratio = acceleration.x * acceleration.y
         position = if (ratio > ACCELERATION_X_Y_OFFSET_TRIGGER)
             Left
