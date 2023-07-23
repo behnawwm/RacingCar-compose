@@ -2,6 +2,7 @@
 A racing car game implementation using Jetpack Compose
 
 ## Milestones
+- [x] accelerometer movement
 - [ ] collision detection
 - [ ] blocker unique positioning
 - [ ] highscore
@@ -13,6 +14,7 @@ A racing car game implementation using Jetpack Compose
 - [ ] online leaderboard
 
 
- <img src="https://github.com/behnawwm/RacingCar-compose/assets/61078796/6c65d224-cd24-4310-af39-c63905b7c56e" width="50%" >
+ <img src="https://github.com/behnawwm/RacingCar-compose/assets/61078796/0d96d675-df1c-4d7c-b577-38d8adcad465" width="40%" >
+
 
 
