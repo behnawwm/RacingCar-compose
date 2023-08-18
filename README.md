@@ -4,7 +4,7 @@ A racing car game implementation using Jetpack Compose
 ## Milestones
 - [x] Blocker unique positioning
 - [x] Movement via accelerometer
-- [ ] Collision detection
+- [x] Collision detection
 - [ ] Highscore
 - [ ] Speedometer
 - [ ] Dynamic game setting
