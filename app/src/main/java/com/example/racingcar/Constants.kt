@@ -1,6 +1,7 @@
 package com.example.racingcar
 
 object Constants {
+
     // game properties
     const val LANE_COUNT = 3
     const val INITIAL_VELOCITY = 5
@@ -9,6 +10,7 @@ object Constants {
     const val SWIPE_MIN_OFFSET_FROM_MAX_WIDTH = 6 //todo rename
     const val ACCELERATION_X_Y_OFFSET_TRIGGER = 15
     const val DEFAULT_ACCELEROMETER_SENSITIVITY = 1
+    const val COLLISION_SCORE_PENALTY = 5
 
     // positioning
     const val CAR_POSITION_PERCENTAGE_FROM_BOTTOM = 20
