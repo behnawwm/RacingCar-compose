@@ -22,20 +22,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import com.example.racingcar.Constants
-import com.example.racingcar.Constants.BLOCKER_INTERSPACE_PERCENTAGE
 import com.example.racingcar.Constants.INITIAL_GAME_SCORE
-import com.example.racingcar.Constants.LANE_COUNT
 import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
 import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
 import com.example.racingcar.MainViewModel
@@ -44,10 +44,9 @@ import com.example.racingcar.models.MovementInput.Accelerometer
 import com.example.racingcar.models.MovementInput.Swipe
 import com.example.racingcar.models.SwipeDirection
 import com.example.racingcar.ui.game.state.BackgroundState
-import com.example.racingcar.ui.game.state.BlockState
+import com.example.racingcar.ui.game.state.BlockersState
 import com.example.racingcar.ui.game.state.CarState
 import kotlin.math.abs
-import kotlin.random.Random
 
 @Composable
 fun RacingCar(
@@ -63,7 +62,7 @@ fun RacingCar(
 
     // states
     var gameScore by remember {
-        mutableStateOf(INITIAL_GAME_SCORE)
+        mutableIntStateOf(INITIAL_GAME_SCORE)
     }
     val backgroundSpeed by remember {
         derivedStateOf {
@@ -74,13 +73,8 @@ fun RacingCar(
         BackgroundState(image = backgroundImageBitmap, onGameScoreIncrease = { gameScore++ })
     val carState = CarState(image = carImageBitmap)
 
-    val blockersCount = 100 / BLOCKER_INTERSPACE_PERCENTAGE
-    val blockers = (1..blockersCount).map {
-        BlockState(
-            image = blockImageBitmap,
-            lanePosition = Random.nextInt(from = 0, until = LANE_COUNT)
-        )
-    }
+    val blockersState = BlockersState(image = blockImageBitmap)
+
 
     // ticker
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
@@ -101,9 +95,9 @@ fun RacingCar(
         if (movementInput == Accelerometer)
             carState.moveWithAcceleration(acceleration)
 
-        var offsetX by remember { mutableStateOf(0f) }
+        var offsetX by remember { mutableFloatStateOf(0f) }
         val minSwipeOffset by remember {
-            mutableStateOf(constraints.maxWidth / SWIPE_MIN_OFFSET_FROM_MAX_WIDTH)
+            mutableIntStateOf(constraints.maxWidth / SWIPE_MIN_OFFSET_FROM_MAX_WIDTH)
         }
 
 
@@ -138,17 +132,19 @@ fun RacingCar(
                 )
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
+                @Suppress("UNUSED_EXPRESSION") //todo enhance!
                 ticker
 
                 backgroundState.move(velocity = backgroundSpeed)
                 backgroundState.draw(drawScope = this)
 
-                blockers.forEachIndexed { index, blockState ->
-                    blockState.move(velocity = backgroundSpeed)
-                    blockState.draw(drawScope = this, index = index)
-                }
+                blockersState.move(velocity = backgroundSpeed)
+                val blockerRects = blockersState.draw(drawScope = this)
 
-                carState.draw(drawScope = this)
+                val carRect = carState.draw(drawScope = this)
+
+                val hasCollision = checkBlockerAndCarCollision(blockerRects, carRect)
+                viewModel.updateCollision(hasCollision)
             }
 
             Text(
@@ -177,4 +173,10 @@ fun RacingCar(
         }
     }
 
+}
+
+fun checkBlockerAndCarCollision(blockerRects: List<Rect>, carRect: Rect): Boolean {
+    return blockerRects.any { blockerRect ->
+        blockerRect.overlaps(carRect)
+    }
 }

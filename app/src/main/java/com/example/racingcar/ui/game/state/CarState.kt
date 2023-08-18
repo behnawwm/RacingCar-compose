@@ -1,9 +1,12 @@
 package com.example.racingcar.ui.game.state
 
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.toOffset
+import androidx.compose.ui.unit.toSize
 import com.example.racingcar.Constants.ACCELERATION_X_Y_OFFSET_TRIGGER
 import com.example.racingcar.Constants.CAR_POSITION_PERCENTAGE_FROM_BOTTOM
 import com.example.racingcar.Constants.CAR_SIZE
@@ -42,7 +45,7 @@ data class CarState(val image: ImageBitmap, var position: CarPosition = Middle) 
     }
 
 
-    fun draw(drawScope: DrawScope) { //todo calculate `size` once per init
+    fun draw(drawScope: DrawScope): Rect { //todo calculate `size` once per init
         drawScope.apply {
             val initialOffsetX = (size.width.toInt() * STREET_SIDE_PERCENTAGE_EACH / 100)
             val laneSize =
@@ -52,14 +55,18 @@ data class CarState(val image: ImageBitmap, var position: CarPosition = Middle) 
                         (laneSize / 2) - (CAR_SIZE / 2) +
                         (laneSize * position.fromLeftOffsetIndex())
 
+            val dstOffset = IntOffset(
+                x = carOffsetX,
+                y = size.height.toInt() - (size.height.toInt() * CAR_POSITION_PERCENTAGE_FROM_BOTTOM / 100)
+            )
+            val dstSize = IntSize(width = CAR_SIZE, height = CAR_SIZE)
+
             drawImage(
                 image = image,
-                dstOffset = IntOffset(
-                    x = carOffsetX,
-                    y = size.height.toInt() - (size.height.toInt() * CAR_POSITION_PERCENTAGE_FROM_BOTTOM / 100)
-                ),
-                dstSize = IntSize(width = CAR_SIZE, height = CAR_SIZE)
+                dstOffset = dstOffset,
+                dstSize = dstSize
             )
+            return Rect(offset = dstOffset.toOffset(), size = dstSize.toSize())
         }
     }
 

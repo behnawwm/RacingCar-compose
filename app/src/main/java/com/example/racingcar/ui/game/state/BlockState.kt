@@ -1,9 +1,12 @@
 package com.example.racingcar.ui.game.state
 
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.toOffset
+import androidx.compose.ui.unit.toSize
 import com.example.racingcar.Constants.BLOCKER_HEIGHT
 import com.example.racingcar.Constants.BLOCKER_INTERSPACE_PERCENTAGE
 import com.example.racingcar.Constants.BLOCKER_WIDTH
@@ -18,7 +21,7 @@ data class BlockState(val image: ImageBitmap, var lanePosition: Int) {
         currentPosY += velocity
     }
 
-    fun draw(drawScope: DrawScope, index: Int) {
+    fun draw(drawScope: DrawScope, index: Int, onDraw: (Rect) -> Unit) {
         drawScope.apply {
             //todo change based on size.width
             val initialOffsetX = (size.width.toInt() * STREET_SIDE_PERCENTAGE_EACH / 100)
@@ -40,16 +43,22 @@ data class BlockState(val image: ImageBitmap, var lanePosition: Int) {
                 lanePosition = Random.nextInt(from = 0, until = LANE_COUNT)
             }
 
-            if (blockerOffsetY < size.height)
+            if (blockerOffsetY < size.height) {
+                val dstOffset = IntOffset(x = blockerOffsetX, y = blockerOffsetY)
+                val dstSize = IntSize(width = BLOCKER_WIDTH, height = BLOCKER_HEIGHT)
+
                 drawImage(
                     image = image,
-                    srcOffset = IntOffset(0, 0),
-                    dstOffset = IntOffset(
-                        x = blockerOffsetX,
-                        y = blockerOffsetY
-                    ),
-                    dstSize = IntSize(width = BLOCKER_WIDTH, height = BLOCKER_HEIGHT)
+                    dstOffset = dstOffset,
+                    dstSize = dstSize
                 )
+                onDraw(
+                    Rect(
+                        offset = dstOffset.toOffset(),
+                        size = dstSize.toSize()
+                    )
+                )
+            }
         }
     }
 }
