@@ -35,7 +35,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import com.example.racingcar.Constants
-import com.example.racingcar.Constants.INITIAL_GAME_SCORE
 import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
 import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
 import com.example.racingcar.MainViewModel
@@ -50,7 +49,7 @@ import kotlin.math.abs
 
 @Composable
 fun RacingCar(
-    viewModel: MainViewModel,
+    viewModel: MainViewModel, //todo migrate to value state and expose events
     isDevMode: Boolean,
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -61,16 +60,17 @@ fun RacingCar(
     val blockImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_block_night)
 
     // states
-    var gameScore by remember {
-        mutableIntStateOf(INITIAL_GAME_SCORE)
-    }
+    val gameScore by viewModel.gameScore.collectAsState()
+
     val backgroundSpeed by remember {
         derivedStateOf {
             (gameScore / Constants.GAME_SCORE_TO_VELOCITY_RATIO) + Constants.INITIAL_VELOCITY
         }
     }
     val backgroundState =
-        BackgroundState(image = backgroundImageBitmap, onGameScoreIncrease = { gameScore++ })
+        BackgroundState(
+            image = backgroundImageBitmap,
+            onGameScoreIncrease = { viewModel.increaseGameScore() })
     val carState = CarState(image = carImageBitmap)
 
     val blockersState = BlockersState(image = blockImageBitmap)
@@ -152,7 +152,7 @@ fun RacingCar(
                 modifier = Modifier.align(Alignment.TopCenter)
             )
             if (isDevMode) {
-                Button(onClick = { gameScore = 0 }) {
+                Button(onClick = { viewModel.resetGameScore() }) {
                     Text(text = "reset")
                 }
             }
