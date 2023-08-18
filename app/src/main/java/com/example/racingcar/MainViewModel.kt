@@ -6,6 +6,7 @@ import com.example.racingcar.Constants.DEFAULT_ACCELEROMETER_SENSITIVITY
 import com.example.racingcar.Constants.INITIAL_GAME_SCORE
 import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.MovementInput
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,7 +22,7 @@ class MainViewModel : ViewModel() {
     private val _gameScore = MutableStateFlow(Constants.INITIAL_GAME_SCORE)
     val gameScore = _gameScore.asStateFlow()
 
-    val vibrateSharedFlow = MutableStateFlow<Long>(-1)
+    val vibrateSharedFlow = MutableSharedFlow<Unit>(replay = 1)
 
     private val collisionStateFlow = MutableStateFlow(false)
 
@@ -33,7 +34,7 @@ class MainViewModel : ViewModel() {
                         val newScore = currentScore - Constants.COLLISION_SCORE_PENALTY
                         newScore.takeIf { it > INITIAL_GAME_SCORE } ?: INITIAL_GAME_SCORE
                     }
-                    vibrateSharedFlow.tryEmit(System.currentTimeMillis())
+                    vibrateSharedFlow.tryEmit(Unit)
                 }
             }
         }

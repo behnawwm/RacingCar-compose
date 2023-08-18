@@ -1,6 +1,5 @@
 package com.example.racingcar.ui.game
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -62,10 +61,7 @@ fun RacingCar(
     val context = LocalContext.current
     LaunchedEffect(key1 = Unit) {
         viewModel.vibrateSharedFlow.collect {
-            it.takeIf { it > 0 }?.let {
-                Log.d("mamad", "RacingCar: ")
-                context.vibrateError()
-            }
+            context.vibrateError()
         }
     }
     // resources
