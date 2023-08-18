@@ -1,5 +1,6 @@
 package com.example.racingcar.ui.game
 
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -19,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -32,6 +34,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import com.example.racingcar.Constants
@@ -45,7 +48,9 @@ import com.example.racingcar.models.SwipeDirection
 import com.example.racingcar.ui.game.state.BackgroundState
 import com.example.racingcar.ui.game.state.BlockersState
 import com.example.racingcar.ui.game.state.CarState
+import com.example.racingcar.utils.vibrateError
 import kotlin.math.abs
+
 
 @Composable
 fun RacingCar(
@@ -54,6 +59,15 @@ fun RacingCar(
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(key1 = Unit) {
+        viewModel.vibrateSharedFlow.collect {
+            it.takeIf { it > 0 }?.let {
+                Log.d("mamad", "RacingCar: ")
+                context.vibrateError()
+            }
+        }
+    }
     // resources
     val backgroundImageBitmap = ImageBitmap.imageResource(id = R.drawable.bg_road_night)
     val carImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_car)

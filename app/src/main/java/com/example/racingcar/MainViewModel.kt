@@ -21,16 +21,20 @@ class MainViewModel : ViewModel() {
     private val _gameScore = MutableStateFlow(Constants.INITIAL_GAME_SCORE)
     val gameScore = _gameScore.asStateFlow()
 
+    val vibrateSharedFlow = MutableStateFlow<Long>(-1)
+
     private val collisionStateFlow = MutableStateFlow(false)
 
     init {
         viewModelScope.launch {
             collisionStateFlow.collect { hasCollision ->
-                if (hasCollision)
+                if (hasCollision) {
                     _gameScore.update { currentScore ->
                         val newScore = currentScore - Constants.COLLISION_SCORE_PENALTY
                         newScore.takeIf { it > INITIAL_GAME_SCORE } ?: INITIAL_GAME_SCORE
                     }
+                    vibrateSharedFlow.tryEmit(System.currentTimeMillis())
+                }
             }
         }
     }
