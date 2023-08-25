@@ -4,17 +4,17 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import com.example.racingcar.Constants.ACCELERATION_X_Y_OFFSET_TRIGGER
-import com.example.racingcar.Constants.CAR_POSITION_PERCENTAGE_FROM_BOTTOM
-import com.example.racingcar.Constants.CAR_SIZE
-import com.example.racingcar.Constants.LANE_COUNT
-import com.example.racingcar.Constants.STREET_SIDE_PERCENTAGE_EACH
 import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.CarPosition
 import com.example.racingcar.models.CarPosition.Left
 import com.example.racingcar.models.CarPosition.Middle
 import com.example.racingcar.models.CarPosition.Right
 import com.example.racingcar.models.SwipeDirection
+import com.example.racingcar.utils.Constants.ACCELERATION_X_Y_OFFSET_TRIGGER
+import com.example.racingcar.utils.Constants.CAR_POSITION_PERCENTAGE_FROM_BOTTOM
+import com.example.racingcar.utils.Constants.CAR_SIZE
+import com.example.racingcar.utils.Constants.LANE_COUNT
+import com.example.racingcar.utils.Constants.STREET_SIDE_PERCENTAGE_EACH
 
 data class CarState(val image: ImageBitmap, var position: CarPosition = Middle) {
 

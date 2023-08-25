@@ -1,4 +1,4 @@
-package com.example.racingcar
+package com.example.racingcar.utils
 
 object Constants {
     // game properties

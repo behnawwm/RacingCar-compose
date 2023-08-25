@@ -1,4 +1,4 @@
-package com.example.racingcar
+package com.example.racingcar.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape

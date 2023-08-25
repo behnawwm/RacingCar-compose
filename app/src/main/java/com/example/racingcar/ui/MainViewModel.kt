@@ -1,9 +1,9 @@
-package com.example.racingcar
+package com.example.racingcar.ui
 
 import androidx.lifecycle.ViewModel
-import com.example.racingcar.Constants.DEFAULT_ACCELEROMETER_SENSITIVITY
 import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.MovementInput
+import com.example.racingcar.utils.Constants.DEFAULT_ACCELEROMETER_SENSITIVITY
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

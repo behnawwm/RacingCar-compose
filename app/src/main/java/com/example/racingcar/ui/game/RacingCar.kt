@@ -32,20 +32,20 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
-import com.example.racingcar.Constants
-import com.example.racingcar.Constants.BLOCKER_INTERSPACE_PERCENTAGE
-import com.example.racingcar.Constants.INITIAL_GAME_SCORE
-import com.example.racingcar.Constants.LANE_COUNT
-import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
-import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
-import com.example.racingcar.MainViewModel
 import com.example.racingcar.R
 import com.example.racingcar.models.MovementInput.Accelerometer
 import com.example.racingcar.models.MovementInput.Swipe
 import com.example.racingcar.models.SwipeDirection
+import com.example.racingcar.ui.MainViewModel
 import com.example.racingcar.ui.game.state.BackgroundState
 import com.example.racingcar.ui.game.state.BlockState
 import com.example.racingcar.ui.game.state.CarState
+import com.example.racingcar.utils.Constants
+import com.example.racingcar.utils.Constants.BLOCKER_INTERSPACE_PERCENTAGE
+import com.example.racingcar.utils.Constants.INITIAL_GAME_SCORE
+import com.example.racingcar.utils.Constants.LANE_COUNT
+import com.example.racingcar.utils.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
+import com.example.racingcar.utils.Constants.TICKER_ANIMATION_DURATION
 import kotlin.math.abs
 import kotlin.random.Random
 

@@ -1,4 +1,4 @@
-package com.example.racingcar
+package com.example.racingcar.ui
 
 import android.content.Context
 import android.hardware.Sensor
