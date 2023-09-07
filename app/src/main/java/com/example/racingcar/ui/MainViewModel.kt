@@ -2,18 +2,27 @@ package com.example.racingcar.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.racingcar.domain.usecase.GetHighscoreUseCase
+import com.example.racingcar.domain.usecase.SaveHighscoreUseCase
 import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.MovementInput
 import com.example.racingcar.utils.Constants.COLLISION_SCORE_PENALTY
 import com.example.racingcar.utils.Constants.DEFAULT_ACCELEROMETER_SENSITIVITY
 import com.example.racingcar.utils.Constants.INITIAL_GAME_SCORE
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val getHighscoreUseCase: GetHighscoreUseCase,
+    private val saveHighscoreUseCase: SaveHighscoreUseCase,
+) : ViewModel() {
+
     private val _acceleration = MutableStateFlow(AccelerationData(0f, 0f, 0f))
     val acceleration = _acceleration.asStateFlow()
 
@@ -22,6 +31,9 @@ class MainViewModel : ViewModel() {
 
     private val _gameScore = MutableStateFlow(INITIAL_GAME_SCORE)
     val gameScore = _gameScore.asStateFlow()
+
+    private val _highscore = MutableStateFlow(0)
+    val highscore = _highscore.asStateFlow()
 
     val vibrateSharedFlow = MutableSharedFlow<Unit>(replay = 1)
 
@@ -37,6 +49,11 @@ class MainViewModel : ViewModel() {
                     }
                     vibrateSharedFlow.tryEmit(Unit)
                 }
+            }
+        }
+        viewModelScope.launch {
+            getHighscoreUseCase.execute().collect {
+                _highscore.value = it
             }
         }
     }
@@ -67,7 +84,15 @@ class MainViewModel : ViewModel() {
 
     fun increaseGameScore() {
         _gameScore.update { currentScore ->
-            currentScore + 1
+            (currentScore + 1).also { newScore ->
+                saveNewHighscore(newScore)
+            }
+        }
+    }
+
+    private fun saveNewHighscore(newScore: Int) {
+        viewModelScope.launch {
+            saveHighscoreUseCase.execute(newScore)
         }
     }
 
