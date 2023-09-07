@@ -6,7 +6,7 @@ import android.media.MediaPlayer
 import android.media.SoundPool
 import com.example.racingcar.R
 
-class SoundManager(private val context: Context) {
+class SoundRepository(private val context: Context) {
     private val soundPool: SoundPool
     private val soundMap: HashMap<Int, Int> = HashMap()
     private var mediaPlayer: MediaPlayer? = null

@@ -1,4 +1,4 @@
-package com.example.racingcar.ui
+package com.example.racingcar.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

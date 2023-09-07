@@ -43,10 +43,10 @@ import com.example.racingcar.R
 import com.example.racingcar.models.MovementInput.Accelerometer
 import com.example.racingcar.models.MovementInput.Gestures
 import com.example.racingcar.models.SwipeDirection
-import com.example.racingcar.ui.MainViewModel
 import com.example.racingcar.ui.game.state.BackgroundState
 import com.example.racingcar.ui.game.state.BlockersState
 import com.example.racingcar.ui.game.state.CarState
+import com.example.racingcar.ui.viewmodel.MainViewModel
 import com.example.racingcar.utils.Constants
 import com.example.racingcar.utils.Constants.CAR_MOVEMENT_SPRING_ANIMATION_STIFFNESS
 import com.example.racingcar.utils.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
