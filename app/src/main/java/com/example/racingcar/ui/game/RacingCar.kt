@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -46,6 +47,7 @@ import com.example.racingcar.ui.game.state.BackgroundState
 import com.example.racingcar.ui.game.state.BlockersState
 import com.example.racingcar.ui.game.state.CarState
 import com.example.racingcar.utils.Constants
+import com.example.racingcar.utils.Constants.CAR_MOVEMENT_SPRING_ANIMATION_STIFFNESS
 import com.example.racingcar.utils.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
 import com.example.racingcar.utils.Constants.TICKER_ANIMATION_DURATION
 import com.example.racingcar.utils.vibrateError
@@ -113,8 +115,10 @@ fun RacingCar(
 
         val carOffsetIndex by animateFloatAsState(
             targetValue = carState.position.fromLeftOffsetIndex(),
-            label = "car offset index"
+            label = "car offset index",
+            animationSpec = spring(stiffness = CAR_MOVEMENT_SPRING_ANIMATION_STIFFNESS)
         )
+
 
 
         Box(
@@ -154,7 +158,7 @@ fun RacingCar(
                 val blockerRects = blockersState.draw(drawScope = this)
 
                 val carRect =
-                    carState.draw(drawScope = this, positionFromLeftOffset = carOffsetIndex)
+                    carState.draw(drawScope = this, offsetIndex = carOffsetIndex)
 
                 val hasCollision = checkBlockerAndCarCollision(blockerRects, carRect)
                 viewModel.updateCollision(hasCollision)
