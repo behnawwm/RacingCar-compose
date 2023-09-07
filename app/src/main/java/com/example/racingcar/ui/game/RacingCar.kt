@@ -2,6 +2,7 @@ package com.example.racingcar.ui.game
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -19,35 +20,36 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
-import com.example.racingcar.Constants
-import com.example.racingcar.Constants.BLOCKER_INTERSPACE_PERCENTAGE
-import com.example.racingcar.Constants.INITIAL_GAME_SCORE
-import com.example.racingcar.Constants.LANE_COUNT
-import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
-import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
-import com.example.racingcar.MainViewModel
 import com.example.racingcar.R
 import com.example.racingcar.models.MovementInput.Accelerometer
-import com.example.racingcar.models.MovementInput.Swipe
+import com.example.racingcar.models.MovementInput.Gestures
 import com.example.racingcar.models.SwipeDirection
+import com.example.racingcar.ui.MainViewModel
 import com.example.racingcar.ui.game.state.BackgroundState
-import com.example.racingcar.ui.game.state.BlockState
+import com.example.racingcar.ui.game.state.BlockersState
 import com.example.racingcar.ui.game.state.CarState
+import com.example.racingcar.utils.Constants
+import com.example.racingcar.utils.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
+import com.example.racingcar.utils.Constants.TICKER_ANIMATION_DURATION
+import com.example.racingcar.utils.vibrateError
 import kotlin.math.abs
-import kotlin.random.Random
 
 @Composable
 fun RacingCar(
@@ -109,7 +111,7 @@ fun RacingCar(
             mutableIntStateOf(constraints.maxWidth / SWIPE_MIN_OFFSET_FROM_MAX_WIDTH)
         }
 
-        val carOffset by animateFloatAsState(
+        val carOffsetIndex by animateFloatAsState(
             targetValue = carState.position.fromLeftOffsetIndex(),
             label = "car offset index"
         )
@@ -120,7 +122,7 @@ fun RacingCar(
                 .fillMaxSize()
                 .then(
                     when (movementInput) {
-                        Swipe -> Modifier.pointerInput(Unit) {
+                        Gestures -> Modifier.pointerInput(Unit) {
                             detectDragGestures(
                                 onDrag = { change, dragAmount ->
                                     change.consume()
@@ -151,7 +153,8 @@ fun RacingCar(
                 blockersState.move(velocity = backgroundSpeed)
                 val blockerRects = blockersState.draw(drawScope = this)
 
-                val carRect = carState.draw(drawScope = this, carOffset = carOffset)
+                val carRect =
+                    carState.draw(drawScope = this, positionFromLeftOffset = carOffsetIndex)
 
                 val hasCollision = checkBlockerAndCarCollision(blockerRects, carRect)
                 viewModel.updateCollision(hasCollision)

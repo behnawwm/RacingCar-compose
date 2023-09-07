@@ -17,7 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.racingcar.models.MovementInput.Accelerometer
-import com.example.racingcar.models.MovementInput.Swipe
+import com.example.racingcar.models.MovementInput.Gestures
 import com.example.racingcar.ui.theme.RacingCarTheme
 import kotlinx.coroutines.launch
 
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.movementInput.collect {
                     when (it) {
-                        Swipe -> {
+                        Gestures -> {
                             unregisterAccelerometer()
                         }
 

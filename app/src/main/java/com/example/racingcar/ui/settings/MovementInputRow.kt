@@ -40,7 +40,7 @@ fun MovementInputRow(
                     if (isAccelerometer)
                         MovementInput.Accelerometer
                     else
-                        MovementInput.Swipe
+                        MovementInput.Gestures
                 )
             },
         )
