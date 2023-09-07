@@ -2,8 +2,10 @@ package com.example.racingcar.ui.game
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -36,20 +38,20 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
-import com.example.racingcar.Constants
-import com.example.racingcar.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
-import com.example.racingcar.Constants.TICKER_ANIMATION_DURATION
-import com.example.racingcar.MainViewModel
 import com.example.racingcar.R
 import com.example.racingcar.models.MovementInput.Accelerometer
-import com.example.racingcar.models.MovementInput.Swipe
+import com.example.racingcar.models.MovementInput.Gestures
 import com.example.racingcar.models.SwipeDirection
+import com.example.racingcar.ui.MainViewModel
 import com.example.racingcar.ui.game.state.BackgroundState
 import com.example.racingcar.ui.game.state.BlockersState
 import com.example.racingcar.ui.game.state.CarState
+import com.example.racingcar.utils.Constants
+import com.example.racingcar.utils.Constants.CAR_MOVEMENT_SPRING_ANIMATION_STIFFNESS
+import com.example.racingcar.utils.Constants.SWIPE_MIN_OFFSET_FROM_MAX_WIDTH
+import com.example.racingcar.utils.Constants.TICKER_ANIMATION_DURATION
 import com.example.racingcar.utils.vibrateError
 import kotlin.math.abs
-
 
 @Composable
 fun RacingCar(
@@ -97,18 +99,26 @@ fun RacingCar(
         ),
         label = "ticker"
     )
-
     BoxWithConstraints(modifier = modifier) {
+        ticker //todo find a better way to put it in here!
+
         val acceleration by viewModel.acceleration.collectAsState()
         val movementInput by viewModel.movementInput.collectAsState()
 
         if (movementInput == Accelerometer)
             carState.moveWithAcceleration(acceleration)
 
-        var offsetX by remember { mutableFloatStateOf(0f) }
+        var swipeOffsetX by remember { mutableFloatStateOf(0f) }
         val minSwipeOffset by remember {
             mutableIntStateOf(constraints.maxWidth / SWIPE_MIN_OFFSET_FROM_MAX_WIDTH)
         }
+
+        val carOffsetIndex by animateFloatAsState(
+            targetValue = carState.position.fromLeftOffsetIndex(),
+            label = "car offset index",
+            animationSpec = spring(stiffness = CAR_MOVEMENT_SPRING_ANIMATION_STIFFNESS)
+        )
+
 
 
         Box(
@@ -116,23 +126,22 @@ fun RacingCar(
                 .fillMaxSize()
                 .then(
                     when (movementInput) {
-                        Swipe -> Modifier.pointerInput(Unit) {
+                        Gestures -> Modifier.pointerInput(Unit) {
                             detectDragGestures(
                                 onDrag = { change, dragAmount ->
                                     change.consume()
-                                    val (x, y) = dragAmount
-                                    offsetX += dragAmount.x
+                                    swipeOffsetX += dragAmount.x
                                 },
                                 onDragEnd = {
                                     when {
-                                        (offsetX < 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Left
-                                        (offsetX > 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Right
+                                        (swipeOffsetX < 0 && abs(swipeOffsetX) > minSwipeOffset) -> SwipeDirection.Left
+                                        (swipeOffsetX > 0 && abs(swipeOffsetX) > minSwipeOffset) -> SwipeDirection.Right
                                         else -> null
                                     }?.let { direction ->
-                                        carState.move(direction)
+                                        carState.moveWithGesture(direction)
                                     }
 
-                                    offsetX = 0F
+                                    swipeOffsetX = 0F
                                 }
                             )
                         }
@@ -142,16 +151,14 @@ fun RacingCar(
                 )
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                @Suppress("UNUSED_EXPRESSION") //todo enhance!
-                ticker
-
                 backgroundState.move(velocity = backgroundSpeed)
                 backgroundState.draw(drawScope = this)
 
                 blockersState.move(velocity = backgroundSpeed)
                 val blockerRects = blockersState.draw(drawScope = this)
 
-                val carRect = carState.draw(drawScope = this)
+                val carRect =
+                    carState.draw(drawScope = this, offsetIndex = carOffsetIndex)
 
                 val hasCollision = checkBlockerAndCarCollision(blockerRects, carRect)
                 viewModel.updateCollision(hasCollision)
@@ -162,7 +169,7 @@ fun RacingCar(
                 modifier = Modifier.align(Alignment.TopCenter)
             )
             if (isDevMode) {
-                Button(onClick = { viewModel.resetGameScore() }) {
+                Button(onClick = viewModel::resetGameScore) {
                     Text(text = "reset")
                 }
             }

@@ -1,4 +1,4 @@
-package com.example.racingcar
+package com.example.racingcar.utils
 
 object Constants {
 
@@ -24,4 +24,5 @@ object Constants {
 
     // misc
     const val TICKER_ANIMATION_DURATION = 250
+    const val CAR_MOVEMENT_SPRING_ANIMATION_STIFFNESS = 2500f
 }

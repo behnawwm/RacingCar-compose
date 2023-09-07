@@ -3,7 +3,7 @@ package com.example.racingcar.ui.game.state
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import com.example.racingcar.Constants
+import com.example.racingcar.utils.Constants
 import kotlin.random.Random
 
 class BlockersState(image: ImageBitmap) {
