@@ -22,8 +22,8 @@ import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 
 sealed class Destinations(val route: String) {
-    object Game : Destinations("game")
-    object Settings : Destinations("settings")
+    data object Game : Destinations("game")
+    data object Settings : Destinations("settings")
 }
 
 
