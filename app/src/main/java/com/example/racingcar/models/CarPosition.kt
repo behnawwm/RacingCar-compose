@@ -2,14 +2,14 @@ package com.example.racingcar.models
 
 enum class CarPosition {
     Right {
-        override fun fromLeftOffsetIndex(): Int = 2
+        override fun fromLeftOffsetIndex(): Float = 2f
     },
     Middle {
-        override fun fromLeftOffsetIndex(): Int = 1
+        override fun fromLeftOffsetIndex(): Float = 1f
     },
     Left {
-        override fun fromLeftOffsetIndex(): Int = 0
+        override fun fromLeftOffsetIndex(): Float = 0f
     };
 
-    abstract fun fromLeftOffsetIndex(): Int
+    abstract fun fromLeftOffsetIndex(): Float
 }

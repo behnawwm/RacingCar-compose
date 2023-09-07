@@ -2,6 +2,7 @@ package com.example.racingcar.ui.game
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -22,8 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,8 +65,8 @@ fun RacingCar(
     val blockImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_block_night)
 
     // states
-    var gameScore by remember {
-        mutableStateOf(INITIAL_GAME_SCORE)
+    var gameScore by rememberSaveable {
+        mutableIntStateOf(INITIAL_GAME_SCORE)
     }
     val backgroundSpeed by remember {
         derivedStateOf {
@@ -93,18 +96,24 @@ fun RacingCar(
         ),
         label = "ticker"
     )
-
     BoxWithConstraints(modifier = modifier) {
+        ticker //todo find a better way to put it in here!
+
         val acceleration by viewModel.acceleration.collectAsState()
         val movementInput by viewModel.movementInput.collectAsState()
 
         if (movementInput == Accelerometer)
             carState.moveWithAcceleration(acceleration)
 
-        var offsetX by remember { mutableStateOf(0f) }
+        var swipeOffsetX by remember { mutableFloatStateOf(0f) }
         val minSwipeOffset by remember {
-            mutableStateOf(constraints.maxWidth / SWIPE_MIN_OFFSET_FROM_MAX_WIDTH)
+            mutableIntStateOf(constraints.maxWidth / SWIPE_MIN_OFFSET_FROM_MAX_WIDTH)
         }
+
+        val carOffset by animateFloatAsState(
+            targetValue = carState.position.fromLeftOffsetIndex(),
+            label = "car offset index"
+        )
 
 
         Box(
@@ -116,19 +125,18 @@ fun RacingCar(
                             detectDragGestures(
                                 onDrag = { change, dragAmount ->
                                     change.consume()
-                                    val (x, y) = dragAmount
-                                    offsetX += dragAmount.x
+                                    swipeOffsetX += dragAmount.x
                                 },
                                 onDragEnd = {
                                     when {
-                                        (offsetX < 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Left
-                                        (offsetX > 0 && abs(offsetX) > minSwipeOffset) -> SwipeDirection.Right
+                                        (swipeOffsetX < 0 && abs(swipeOffsetX) > minSwipeOffset) -> SwipeDirection.Left
+                                        (swipeOffsetX > 0 && abs(swipeOffsetX) > minSwipeOffset) -> SwipeDirection.Right
                                         else -> null
                                     }?.let { direction ->
-                                        carState.move(direction)
+                                        carState.moveWithGesture(direction)
                                     }
 
-                                    offsetX = 0F
+                                    swipeOffsetX = 0F
                                 }
                             )
                         }
@@ -138,8 +146,6 @@ fun RacingCar(
                 )
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                ticker
-
                 backgroundState.move(velocity = backgroundSpeed)
                 backgroundState.draw(drawScope = this)
 
@@ -148,7 +154,7 @@ fun RacingCar(
                     blockState.draw(drawScope = this, index = index)
                 }
 
-                carState.draw(drawScope = this)
+                carState.draw(drawScope = this, carOffset)
             }
 
             Text(
@@ -159,6 +165,7 @@ fun RacingCar(
                 Button(onClick = { gameScore = 0 }) {
                     Text(text = "reset")
                 }
+
             }
             Button(
                 onClick = onSettingsClick,

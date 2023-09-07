@@ -6,7 +6,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -87,7 +86,6 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        Log.d("mamad", "onSensorChanged: ${event.values[0]}")
         val accelerationX = event.values[0]
         val accelerationY = event.values[1]
         val accelerationZ = event.values[2]

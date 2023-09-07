@@ -13,7 +13,7 @@ class MainViewModel : ViewModel() {
     private val _acceleration = MutableStateFlow(AccelerationData(0f, 0f, 0f))
     val acceleration = _acceleration.asStateFlow()
 
-    private val _movementInput = MutableStateFlow(MovementInput.Accelerometer)
+    private val _movementInput = MutableStateFlow(MovementInput.Swipe)
     val movementInput = _movementInput.asStateFlow()
 
     fun setAcceleration(
