@@ -103,12 +103,20 @@ data class CarState(
     fun moveWithAcceleration(acceleration: AccelerationData) {
         //todo not working when phone is on a surface (x=0?)
         val ratio = acceleration.x * acceleration.y
-        position = if (ratio > ACCELERATION_X_Y_OFFSET_TRIGGER)
+        position = if (ratio > ACCELERATION_X_Y_OFFSET_TRIGGER) {
+            rotationDirection = RotationDirection.Left
             Left
-        else if (ratio < -ACCELERATION_X_Y_OFFSET_TRIGGER)
+        } else if (ratio < -ACCELERATION_X_Y_OFFSET_TRIGGER) {
+            rotationDirection = RotationDirection.Right
             Right
-        else
+        } else {
+            rotationDirection = when (position) {
+                Right -> RotationDirection.Left
+                Middle -> null
+                Left -> RotationDirection.Right
+            }
             Middle
+        }
     }
 
 }
