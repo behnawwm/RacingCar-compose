@@ -19,9 +19,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.racingcar.models.MovementInput.Accelerometer
 import com.example.racingcar.models.MovementInput.Gestures
 import com.example.racingcar.ui.theme.RacingCarTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity(), SensorEventListener {
     private val viewModel by viewModels<MainViewModel>()
 
