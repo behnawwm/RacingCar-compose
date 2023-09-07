@@ -2,17 +2,19 @@
 A racing car game implementation using Jetpack Compose
 
 ## Milestones
-- [ ] collision detection
-- [ ] blocker unique positioning
-- [ ] highscore
-- [ ] speedometer
-- [ ] dynamic game setting
-- [ ] movement via gyroscope
-- [ ] sounds
+- [x] Blocker unique positioning
+- [x] Movement via accelerometer
+- [x] Collision detection
+- [ ] Highscore
+- [ ] Speedometer
+- [ ] Dynamic game setting
+- [ ] Sounds
+- [ ] power-ups (e.g. booster, shield)
 - [ ] Achievements
-- [ ] online leaderboard
+- [ ] Online leaderboard
 
 
- <img src="https://github.com/behnawwm/RacingCar-compose/assets/61078796/6c65d224-cd24-4310-af39-c63905b7c56e" width="50%" >
+ <img src="https://github.com/behnawwm/RacingCar-compose/assets/61078796/0d96d675-df1c-4d7c-b577-38d8adcad465" width="40%" >
+
 
 

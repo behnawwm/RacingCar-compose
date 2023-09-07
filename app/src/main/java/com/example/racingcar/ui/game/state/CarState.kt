@@ -1,19 +1,35 @@
 package com.example.racingcar.ui.game.state
 
-import android.util.Log
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import com.example.racingcar.Constants.ACCELERATION_X_Y_OFFSET_TRIGGER
+import com.example.racingcar.Constants.CAR_POSITION_PERCENTAGE_FROM_BOTTOM
+import com.example.racingcar.Constants.CAR_SIZE
+import com.example.racingcar.Constants.LANE_COUNT
+import com.example.racingcar.Constants.STREET_SIDE_PERCENTAGE_EACH
 import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.CarPosition
 import com.example.racingcar.models.CarPosition.*
 import com.example.racingcar.models.SwipeDirection
-import com.example.racingcar.utils.Constants.ACCELERATION_X_Y_OFFSET_TRIGGER
-import com.example.racingcar.utils.Constants.CAR_POSITION_PERCENTAGE_FROM_BOTTOM
-import com.example.racingcar.utils.Constants.CAR_SIZE
-import com.example.racingcar.utils.Constants.LANE_COUNT
-import com.example.racingcar.utils.Constants.STREET_SIDE_PERCENTAGE_EACH
+
+data class CarState(val image: ImageBitmap, var position: CarPosition = Middle) {
+
+    fun move(direction: SwipeDirection) {
+        when (direction) {
+            SwipeDirection.Right -> moveRight()
+            SwipeDirection.Left -> moveLeft()
+        }
+    }
+
+    private fun moveRight() {
+        position = when (position) {
+            Right -> Right
+            Middle -> Right
+            Left -> Middle
+        }
+    }
 
 data class CarState(
     val image: ImageBitmap,
@@ -24,7 +40,6 @@ data class CarState(
         drawScope: DrawScope,
         positionFromLeftOffset: Float
     ) { //todo calculate `size` once per init
-        Log.d("mamad", "car state draw: $position")
         drawScope.apply {
             val initialOffsetX = (size.width.toInt() * STREET_SIDE_PERCENTAGE_EACH / 100)
             val laneSize =
@@ -34,14 +49,18 @@ data class CarState(
                         (laneSize / 2) - (CAR_SIZE / 2) +
                         (laneSize * positionFromLeftOffset).toInt()
 
+            val dstOffset = IntOffset(
+                x = carOffsetX,
+                y = size.height.toInt() - (size.height.toInt() * CAR_POSITION_PERCENTAGE_FROM_BOTTOM / 100)
+            )
+            val dstSize = IntSize(width = CAR_SIZE, height = CAR_SIZE)
+
             drawImage(
                 image = image,
-                dstOffset = IntOffset(
-                    x = carOffsetX,
-                    y = size.height.toInt() - (size.height.toInt() * CAR_POSITION_PERCENTAGE_FROM_BOTTOM / 100)
-                ),
-                dstSize = IntSize(width = CAR_SIZE, height = CAR_SIZE)
+                dstOffset = dstOffset,
+                dstSize = dstSize
             )
+            return Rect(offset = dstOffset.toOffset(), size = dstSize.toSize())
         }
     }
 
