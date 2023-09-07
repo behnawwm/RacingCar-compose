@@ -20,7 +20,6 @@ import com.example.racingcar.models.MovementInput.Accelerometer
 import com.example.racingcar.models.MovementInput.Gestures
 import com.example.racingcar.ui.theme.RacingCarTheme
 import com.example.racingcar.ui.viewmodel.MainViewModel
-import com.example.racingcar.ui.viewmodel.SoundViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -28,7 +27,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), SensorEventListener {
     private val viewModel by viewModels<MainViewModel>()
-    private val soundViewModel by viewModels<SoundViewModel>()
 
     private val sensorManager by lazy { getSystemService(Context.SENSOR_SERVICE) as SensorManager }
     private val accelerometer by lazy { sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) }
@@ -44,7 +42,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    RacingCarGameNavHost(viewModel)
+                    RacingCarGameNavHost()
                 }
             }
         }
@@ -71,7 +69,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     override fun onResume() {
         super.onResume()
         registerAccelerometer()
-        soundViewModel.playBackgroundMusic()
+        viewModel.playBackgroundMusic()
     }
 
     private fun registerAccelerometer() {
@@ -89,12 +87,12 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     override fun onPause() {
         super.onPause()
         unregisterAccelerometer()
-        soundViewModel.stopBackgroundMusic()
+        viewModel.stopBackgroundMusic()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        soundViewModel.release()
+        viewModel.releaseSounds()
     }
 
     override fun onSensorChanged(event: SensorEvent) {

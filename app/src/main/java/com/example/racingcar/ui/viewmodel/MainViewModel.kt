@@ -2,6 +2,7 @@ package com.example.racingcar.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.racingcar.R
 import com.example.racingcar.domain.usecase.GetHighscoreUseCase
 import com.example.racingcar.domain.usecase.SaveHighscoreUseCase
 import com.example.racingcar.models.AccelerationData
@@ -9,6 +10,7 @@ import com.example.racingcar.models.MovementInput
 import com.example.racingcar.utils.Constants.COLLISION_SCORE_PENALTY
 import com.example.racingcar.utils.Constants.DEFAULT_ACCELEROMETER_SENSITIVITY
 import com.example.racingcar.utils.Constants.INITIAL_GAME_SCORE
+import com.example.racingcar.utils.SoundRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +23,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getHighscoreUseCase: GetHighscoreUseCase,
     private val saveHighscoreUseCase: SaveHighscoreUseCase,
+    private val soundRepository: SoundRepository,
 ) : ViewModel() {
 
     private val _acceleration = MutableStateFlow(AccelerationData(0f, 0f, 0f))
@@ -47,6 +50,7 @@ class MainViewModel @Inject constructor(
                         val newScore = currentScore - COLLISION_SCORE_PENALTY
                         newScore.takeIf { it > INITIAL_GAME_SCORE } ?: INITIAL_GAME_SCORE
                     }
+                    playBlockerHitSound()
                     vibrateSharedFlow.tryEmit(Unit)
                 }
             }
@@ -56,6 +60,9 @@ class MainViewModel @Inject constructor(
                 _highscore.value = it
             }
         }
+        soundRepository.loadSound(NEW_HIGHSCORE_SOUND_ID, R.raw.new_highscore)
+        soundRepository.loadSound(BLOCKER_HIT_SOUND_ID, R.raw.blocker_hit)
+        soundRepository.loadSound(MILESTONE_REACH_SOUND_ID, R.raw.milestone_reach)
     }
 
     fun setAcceleration(
@@ -86,6 +93,8 @@ class MainViewModel @Inject constructor(
         _gameScore.update { currentScore ->
             (currentScore + 1).also { newScore ->
                 saveNewHighscore(newScore)
+                if (newScore % 10 == 0)
+                    playMilestoneReachSound()
             }
         }
     }
@@ -98,6 +107,33 @@ class MainViewModel @Inject constructor(
 
     fun resetGameScore() {
         _gameScore.update { INITIAL_GAME_SCORE }
+    }
+
+    private fun playBlockerHitSound() {
+        soundRepository.playSound(BLOCKER_HIT_SOUND_ID)
+    }
+
+    fun playMilestoneReachSound() {
+        soundRepository.playSound(MILESTONE_REACH_SOUND_ID)
+    }
+
+
+    fun playBackgroundMusic() {
+        soundRepository.playBackgroundMusic()
+    }
+
+    fun stopBackgroundMusic() {
+        soundRepository.stopBackgroundMusic()
+    }
+
+    fun releaseSounds() {
+        soundRepository.release()
+    }
+
+    companion object {
+        const val NEW_HIGHSCORE_SOUND_ID = 1
+        const val BLOCKER_HIT_SOUND_ID = 2
+        const val MILESTONE_REACH_SOUND_ID = 3
     }
 
 

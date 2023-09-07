@@ -84,7 +84,8 @@ fun RacingCar(
     val backgroundState =
         BackgroundState(
             image = backgroundImageBitmap,
-            onGameScoreIncrease = { viewModel.increaseGameScore() })
+            onGameScoreIncrease = viewModel::increaseGameScore
+        )
     val carState = CarState(image = carImageBitmap)
 
     val blockersState = BlockersState(image = blockImageBitmap)
