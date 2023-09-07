@@ -11,6 +11,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -73,6 +74,7 @@ fun RacingCar(
 
     // states
     val gameScore by viewModel.gameScore.collectAsState()
+    val highscore by viewModel.highscore.collectAsState()
 
     val backgroundSpeed by remember {
         derivedStateOf {
@@ -164,13 +166,14 @@ fun RacingCar(
                 viewModel.updateCollision(hasCollision)
             }
 
-            Text(
-                text = "score: $gameScore",
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
+            Text(text = "score: $gameScore", modifier = Modifier.align(Alignment.TopCenter))
+
             if (isDevMode) {
-                Button(onClick = viewModel::resetGameScore) {
-                    Text(text = "reset")
+                Column {
+                    Button(onClick = viewModel::resetGameScore) {
+                        Text(text = "reset")
+                    }
+                    Text(text = "high score: $highscore")
                 }
             }
             Button(
