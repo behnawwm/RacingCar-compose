@@ -3,6 +3,7 @@ package com.example.racingcar.di
 import com.example.racingcar.domain.repo.HighscoreRepository
 import com.example.racingcar.domain.usecase.GetHighscoreUseCase
 import com.example.racingcar.domain.usecase.SaveHighscoreUseCase
+import com.example.racingcar.utils.SoundRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,8 +26,9 @@ object UseCaseModule {
     @Provides
     @Singleton
     fun providesSaveHighscoreUseCase(
-        highscoreRepository: HighscoreRepository
+        highscoreRepository: HighscoreRepository,
+        soundRepository: SoundRepository,
     ): SaveHighscoreUseCase {
-        return SaveHighscoreUseCase(highscoreRepository)
+        return SaveHighscoreUseCase(highscoreRepository, soundRepository)
     }
 }

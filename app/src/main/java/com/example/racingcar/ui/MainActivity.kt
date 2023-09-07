@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.racingcar.models.MovementInput.Accelerometer
 import com.example.racingcar.models.MovementInput.Gestures
 import com.example.racingcar.ui.theme.RacingCarTheme
+import com.example.racingcar.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    RacingCarGameNavHost(viewModel)
+                    RacingCarGameNavHost()
                 }
             }
         }
@@ -68,6 +69,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     override fun onResume() {
         super.onResume()
         registerAccelerometer()
+        viewModel.playBackgroundMusic()
     }
 
     private fun registerAccelerometer() {
@@ -85,6 +87,12 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     override fun onPause() {
         super.onPause()
         unregisterAccelerometer()
+        viewModel.stopBackgroundMusic()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.releaseSounds()
     }
 
     override fun onSensorChanged(event: SensorEvent) {
