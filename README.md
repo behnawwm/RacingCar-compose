@@ -5,10 +5,10 @@ A racing car game implementation using Jetpack Compose
 - [x] Blocker unique positioning
 - [x] Movement via accelerometer
 - [x] Collision detection
-- [ ] Highscore
+- [x] Highscore
+- [ ] Sounds
 - [ ] Speedometer
 - [ ] Dynamic game setting
-- [ ] Sounds
 - [ ] power-ups (e.g. booster, shield)
 - [ ] Achievements
 - [ ] Online leaderboard
