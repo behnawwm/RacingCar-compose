@@ -14,7 +14,8 @@ A racing car game implementation using Jetpack Compose
 - [ ] Online leaderboard
 
 
- <img src="https://github.com/behnawwm/RacingCar-compose/assets/61078796/0d96d675-df1c-4d7c-b577-38d8adcad465" width="40%" >
+ <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/61078796/266766492-1da7eca3-4b9d-4698-9cd1-c2da689fc0be.jpg" width="40%" >
 
 
+https://github.com/behnawwm/RacingCar-compose/assets/61078796/08babe6e-d300-4d63-822e-67dde043d013
 
