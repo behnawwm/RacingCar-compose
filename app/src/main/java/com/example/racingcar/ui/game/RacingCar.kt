@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -181,7 +182,6 @@ fun RacingGame(
             )
 
             TopActionButtons(
-                gameState = gameState,
                 onSettingsClick = onSettingsClick,
                 onPauseGameState = { gameState = GameState(GameState.Status.PAUSED) },
                 onResetGameScore = viewModel::resetGameScore,
@@ -192,26 +192,35 @@ fun RacingGame(
                 visible = gameState.isStopped() || gameState.isPaused(),
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White)
-                    .padding(16.dp)
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Game is ${gameState.status}", color = Color.Black)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = {
-                        gameState = GameState(GameState.Status.RUNNING)
-                    }) {
-                        Text(text = "Start!")
-                    }
-                }
+                GameStateIndicator(gameState = gameState)
             }
 
         }
     }
 
+}
+
+@Composable
+private fun GameStateIndicator(gameState: GameState) {
+    var gameState1 = gameState
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .padding(16.dp)
+    ) {
+        Text("Game is ${gameState1.status}", color = Color.Black)
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
+            gameState1 = GameState(GameState.Status.RUNNING)
+        }) {
+            Text(text = "Start!")
+        }
+    }
 }
 
 @Composable
@@ -286,7 +295,6 @@ private fun DrawScope.drawBackground(
 
 @Composable
 fun BoxScope.TopActionButtons(
-    gameState: GameState,
     onSettingsClick: () -> Unit,
     onPauseGameState: () -> Unit,
     onResetGameScore: () -> Unit,
@@ -321,7 +329,12 @@ fun BoxScope.TopActionButtons(
         }
         if (isDevMode) {
             Button(onClick = onResetGameScore) {
-                Text(text = "reset")
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Filled.Refresh),
+                    contentDescription = "reset"
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Reset")
             }
         }
     }
