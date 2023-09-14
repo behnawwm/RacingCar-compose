@@ -1,6 +1,5 @@
 package com.example.racingcar.ui.game
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,7 +12,7 @@ import com.example.racingcar.ui.game.state.GameState
 
 
 @Composable
-fun RacingGameCanvas(
+fun GameCanvas(
     gameState: GameState,
     backgroundState: BackgroundState,
     backgroundSpeed: Int,
@@ -25,7 +24,6 @@ fun RacingGameCanvas(
     modifier: Modifier = Modifier,
 ) {
     Canvas(modifier = modifier) {
-        Log.d("mamad", "size: $size")
         drawBackground(
             gameState = gameState,
             backgroundState = backgroundState,

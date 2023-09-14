@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.example.racingcar.models.MovementInput
 
 @Composable
-fun settings(
+fun SettingsBottomSheet(
     movementInput: MovementInput,
     onMovementInputChange: (MovementInput) -> Unit
 ) {

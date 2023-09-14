@@ -1,9 +1,11 @@
 package com.example.racingcar.ui.settings
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Switch
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,25 +26,29 @@ fun MovementInputRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Color.Black)) {
-                append("Movement Input: ")
-            }
-            withStyle(style = SpanStyle(color = Color.Red)) {
-                append(movementInput.name)
-            }
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = Color.Black)) {
+                    append("Movement Input: ")
+                }
+                withStyle(style = SpanStyle(color = Color.Red)) {
+                    append(movementInput.name)
+                }
 
-        }, color = Color.Black)
-        Switch(
-            checked = movementInput == MovementInput.Accelerometer,
-            onCheckedChange = { isAccelerometer ->
-                onMovementInputChange(
-                    if (isAccelerometer)
-                        MovementInput.Accelerometer
-                    else
-                        MovementInput.TapGestures
-                )
             },
+            color = Color.Black
         )
+        Column {
+            Log.d("mamad", "settings: $movementInput")
+            MovementInput.values().forEach { input ->
+                Row {
+                    RadioButton(
+                        selected = movementInput == input,
+                        onClick = { onMovementInputChange(input) }
+                    )
+                    Text(text = input.name, color = Color.Black)
+                }
+            }
+        }
     }
 }

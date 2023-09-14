@@ -1,5 +1,6 @@
 package com.example.racingcar.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -16,7 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.racingcar.ui.game.RacingGameScreen
-import com.example.racingcar.ui.settings.settings
+import com.example.racingcar.ui.settings.SettingsBottomSheet
 import com.example.racingcar.ui.viewmodel.MainViewModel
 import com.example.racingcar.utils.vibrateError
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -39,28 +40,27 @@ fun RacingCarGameNavHost() {
         bottomSheetNavigator = bottomSheetNavigator,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
     ) {
+        val viewModel = hiltViewModel<MainViewModel>()
         NavHost(navController, Destinations.Game.route) {
-            gameScreen(navController)
-            settingsScreen()
+            gameScreen(navController = navController, viewModel = viewModel)
+            settingsScreen(viewModel = viewModel)
         }
     }
 }
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
-private fun NavGraphBuilder.settingsScreen() {
+private fun NavGraphBuilder.settingsScreen(viewModel: MainViewModel) {
     bottomSheet(Destinations.Settings.route) {
-        val viewModel = hiltViewModel<MainViewModel>()
         val movementInput by viewModel.movementInput.collectAsState()
-        settings(
+        SettingsBottomSheet(
             movementInput = movementInput,
             onMovementInputChange = { viewModel.setMovementInput(it) }
         )
     }
 }
 
-private fun NavGraphBuilder.gameScreen(navController: NavHostController) {
+private fun NavGraphBuilder.gameScreen(navController: NavHostController, viewModel: MainViewModel) {
     composable(Destinations.Game.route) {
-        val viewModel = hiltViewModel<MainViewModel>()
 
         val context = LocalContext.current
         LaunchedEffect(context) {
@@ -74,6 +74,7 @@ private fun NavGraphBuilder.gameScreen(navController: NavHostController) {
         val acceleration by viewModel.acceleration.collectAsState()
         val movementInput by viewModel.movementInput.collectAsState()
 
+        Log.d("mamad", "navigation: $movementInput")
         RacingGameScreen(
             isDevMode = { true },
             onSettingsClick = {

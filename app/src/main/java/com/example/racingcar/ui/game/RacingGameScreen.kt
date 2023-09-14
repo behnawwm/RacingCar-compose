@@ -1,5 +1,6 @@
 package com.example.racingcar.ui.game
 
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -106,7 +107,8 @@ fun RacingGameScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .then(
-                    if (gameState.isRunning())
+                    if (gameState.isRunning()) {
+                        Log.d("mamad", "screen: ${movementInput()}")
                         when (movementInput()) {
                             TapGestures ->
                                 Modifier.detectCarPositionByPointerInput(maxWidth = maxWidth.value.toInt()) { position ->
@@ -119,11 +121,11 @@ fun RacingGameScreen(
 
                             Accelerometer -> Modifier
                         }
-                    else
+                    } else
                         Modifier
                 )
         ) {
-            RacingGameCanvas(
+            GameCanvas(
                 gameState = gameState,
                 backgroundState = backgroundState,
                 backgroundSpeed = backgroundSpeed,
