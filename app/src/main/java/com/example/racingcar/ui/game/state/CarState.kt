@@ -75,7 +75,20 @@ data class CarState(
         }
     }
 
-    fun moveWithGesture(swipeDirection: SwipeDirection) {
+    fun moveWithTapGesture(position: CarPosition) {
+        val currentPositionIndex = this.position.fromLeftOffsetIndex()
+        val nextPositionIndex = position.fromLeftOffsetIndex()
+
+        if (nextPositionIndex == currentPositionIndex)
+            return
+        else if (nextPositionIndex > currentPositionIndex)
+            moveRight()
+        else
+            moveLeft()
+
+    }
+
+    fun moveWithSwipeGesture(swipeDirection: SwipeDirection) {
         when (swipeDirection) {
             SwipeDirection.Right -> moveRight()
             SwipeDirection.Left -> moveLeft()
