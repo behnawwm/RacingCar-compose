@@ -1,6 +1,5 @@
 package com.example.racingcar.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -74,7 +73,6 @@ private fun NavGraphBuilder.gameScreen(navController: NavHostController, viewMod
         val acceleration by viewModel.acceleration.collectAsState()
         val movementInput by viewModel.movementInput.collectAsState()
 
-        Log.d("mamad", "navigation: $movementInput")
         RacingGameScreen(
             isDevMode = { true },
             onSettingsClick = {

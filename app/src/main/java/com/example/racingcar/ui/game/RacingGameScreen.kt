@@ -1,6 +1,5 @@
 package com.example.racingcar.ui.game
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -95,8 +95,10 @@ fun RacingGameScreen(
     BoxWithConstraints(modifier = modifier) {
         ticker //todo find a better way to put it in here!
 
-        if (movementInput() == Accelerometer)
-            carState.moveWithAcceleration(acceleration())
+        LaunchedEffect(movementInput()) {
+            if (movementInput() == Accelerometer)
+                carState.moveWithAcceleration(acceleration())
+        }
 
         val carOffsetIndex by animateFloatAsState(
             targetValue = carState.position.fromLeftOffsetIndex(),
@@ -108,7 +110,6 @@ fun RacingGameScreen(
                 .fillMaxSize()
                 .then(
                     if (gameState.isRunning()) {
-                        Log.d("mamad", "screen: ${movementInput()}")
                         when (movementInput()) {
                             TapGestures ->
                                 Modifier.detectCarPositionByPointerInput(maxWidth = maxWidth.value.toInt()) { position ->

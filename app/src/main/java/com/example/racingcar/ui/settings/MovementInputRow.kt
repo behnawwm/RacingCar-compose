@@ -1,6 +1,5 @@
 package com.example.racingcar.ui.settings
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +38,6 @@ fun MovementInputRow(
             color = Color.Black
         )
         Column {
-            Log.d("mamad", "settings: $movementInput")
             MovementInput.values().forEach { input ->
                 Row {
                     RadioButton(
