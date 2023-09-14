@@ -20,7 +20,7 @@ class HighscoreRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getHighScore(): Flow<Int> {
+    override fun getHighScore(): Flow<Int> {
         return dataStore.data.map {
             it[HIGHSCORE_DATASTORE_KEY] ?: 0
         }

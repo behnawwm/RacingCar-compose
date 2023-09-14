@@ -6,5 +6,5 @@ interface HighscoreRepository {
 
     suspend fun saveHighScore(score: Int)
 
-    suspend fun getHighScore(): Flow<Int>
+    fun getHighScore(): Flow<Int>
 }

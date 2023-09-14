@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.racingcar.ui.game.RacingCar
+import com.example.racingcar.ui.game.RacingGame
 import com.example.racingcar.ui.settings.settings
 import com.example.racingcar.ui.viewmodel.MainViewModel
 import com.example.racingcar.utils.vibrateError
@@ -69,7 +69,7 @@ private fun NavGraphBuilder.gameScreen(navController: NavHostController) {
             }
         }
 
-        RacingCar(
+        RacingGame(
             viewModel = viewModel,
             isDevMode = true,
             onSettingsClick = {

@@ -1,5 +1,6 @@
 package com.example.racingcar.ui.viewmodel
 
+import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.racingcar.R
@@ -14,7 +15,13 @@ import com.example.racingcar.utils.SoundRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,29 +47,44 @@ class MainViewModel @Inject constructor(
 
     val vibrateSharedFlow = MutableSharedFlow<Unit>(replay = 1)
 
-    private val collisionStateFlow = MutableStateFlow(false)
+    private val carRectStateFlow = MutableStateFlow<Rect?>(null)
+    private val blockerRectsStateFlow = MutableStateFlow<List<Rect>>(emptyList())
+
+    private val carAndBlockerCollisionStateFlow =
+        combine(carRectStateFlow.filterNotNull(), blockerRectsStateFlow) { carRect, blockerRects ->
+            checkBlockerAndCarCollision(blockerRects, carRect)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
 
     init {
-        viewModelScope.launch {
-            collisionStateFlow.collect { hasCollision ->
-                if (hasCollision) {
-                    _gameScore.update { currentScore ->
-                        val newScore = currentScore - COLLISION_SCORE_PENALTY
-                        newScore.takeIf { it > INITIAL_GAME_SCORE } ?: INITIAL_GAME_SCORE
-                    }
-                    playBlockerHitSound()
-                    vibrateSharedFlow.tryEmit(Unit)
-                }
-            }
-        }
-        viewModelScope.launch {
-            getHighscoreUseCase.execute().collect {
-                _highscore.value = it
-            }
-        }
+        observeCollision()
+        observeHighscore()
+
         soundRepository.loadSound(NEW_HIGHSCORE_SOUND_ID, R.raw.new_highscore)
         soundRepository.loadSound(BLOCKER_HIT_SOUND_ID, R.raw.blocker_hit)
         soundRepository.loadSound(MILESTONE_REACH_SOUND_ID, R.raw.milestone_reach)
+    }
+
+    private fun observeHighscore() {
+        getHighscoreUseCase.execute().onEach {
+            _highscore.value = it
+        }.launchIn(viewModelScope)
+    }
+
+    private fun observeCollision() {
+        carAndBlockerCollisionStateFlow.onEach { hasCollision ->
+            if (hasCollision) {
+                _gameScore.update { currentScore ->
+                    val newScore = currentScore - COLLISION_SCORE_PENALTY
+                    newScore.takeIf { it > INITIAL_GAME_SCORE } ?: INITIAL_GAME_SCORE
+                }
+                playBlockerHitSound()
+                vibrateSharedFlow.tryEmit(Unit)
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun setAcceleration(
@@ -84,10 +106,6 @@ class MainViewModel @Inject constructor(
         _movementInput.update { movementInput }
     }
 
-
-    fun updateCollision(hasCollision: Boolean) {
-        collisionStateFlow.update { hasCollision }
-    }
 
     fun increaseGameScore() {
         _gameScore.update { currentScore ->
@@ -130,11 +148,25 @@ class MainViewModel @Inject constructor(
         soundRepository.release()
     }
 
+    fun updateCarRect(carRect: Rect) {
+        carRectStateFlow.value = carRect
+    }
+
+    fun updateBlockerRects(blockerRects: List<Rect>) {
+        blockerRectsStateFlow.value = blockerRects
+    }
+
     companion object {
         const val NEW_HIGHSCORE_SOUND_ID = 1
         const val BLOCKER_HIT_SOUND_ID = 2
         const val MILESTONE_REACH_SOUND_ID = 3
     }
 
+
+    private fun checkBlockerAndCarCollision(blockerRects: List<Rect>, carRect: Rect): Boolean {
+        return blockerRects.any { blockerRect ->
+            blockerRect.overlaps(carRect)
+        }
+    }
 
 }

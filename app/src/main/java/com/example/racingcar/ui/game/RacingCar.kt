@@ -12,6 +12,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -42,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.imageResource
@@ -62,7 +64,7 @@ import com.example.racingcar.utils.Constants.TICKER_ANIMATION_DURATION
 import kotlin.math.abs
 
 @Composable
-fun RacingCar(
+fun RacingGame(
     viewModel: MainViewModel, //todo migrate to value state and expose events
     isDevMode: Boolean,
     onSettingsClick: () -> Unit,
@@ -159,63 +161,32 @@ fun RacingCar(
                     }
                 )
         ) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                if (!gameState.isPaused())
-                    backgroundState.move(velocity = backgroundSpeed)
-                backgroundState.draw(drawScope = this)
+            RacingGameCanvas(
+                gameState = gameState,
+                backgroundState = backgroundState,
+                backgroundSpeed = backgroundSpeed,
+                blockersState = blockersState,
+                viewModel = viewModel,
+                carState = carState,
+                carOffsetIndex = carOffsetIndex
+            )
 
-                val carRect =
-                    carState.draw(drawScope = this, offsetIndex = carOffsetIndex)
+            Text(
+                text = "score: $gameScore",
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+            Text(
+                text = "high score: $highscore",
+                modifier = Modifier.align(Alignment.TopStart)
+            )
 
-                if (!gameState.isStopped()) {
-                    if (!gameState.isPaused())
-                        blockersState.move(velocity = backgroundSpeed)
-                    val blockerRects = blockersState.draw(drawScope = this)
-
-                    val hasCollision = checkBlockerAndCarCollision(blockerRects, carRect)
-                    viewModel.updateCollision(hasCollision)
-                }
-            }
-
-            Text(text = "score: $gameScore", modifier = Modifier.align(Alignment.TopCenter))
-
-            if (isDevMode) {
-                Column {
-                    Button(onClick = viewModel::resetGameScore) {
-                        Text(text = "reset")
-                    }
-                    Text(text = "high score: $highscore")
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Button(
-                    onClick = onSettingsClick,
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.Settings),
-                        contentDescription = "settings"
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "Settings")
-                }
-                Button(
-                    onClick = { gameState = GameState(GameState.Status.PAUSED) },
-                    modifier = Modifier
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.Pause),
-                        contentDescription = "pause"
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "Pause")
-                }
-            }
-
+            TopActionButtons(
+                gameState = gameState,
+                onSettingsClick = onSettingsClick,
+                onPauseGameState = { gameState = GameState(GameState.Status.PAUSED) },
+                onResetGameScore = viewModel::resetGameScore,
+                isDevMode = isDevMode
+            )
 
             AnimatedVisibility(
                 visible = gameState.isStopped() || gameState.isPaused(),
@@ -243,8 +214,115 @@ fun RacingCar(
 
 }
 
-fun checkBlockerAndCarCollision(blockerRects: List<Rect>, carRect: Rect): Boolean {
-    return blockerRects.any { blockerRect ->
-        blockerRect.overlaps(carRect)
+@Composable
+private fun RacingGameCanvas(
+    gameState: GameState,
+    backgroundState: BackgroundState,
+    backgroundSpeed: Int,
+    blockersState: BlockersState,
+    viewModel: MainViewModel,
+    carState: CarState,
+    carOffsetIndex: Float
+) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        drawBackground(
+            gameState = gameState,
+            backgroundState = backgroundState,
+            backgroundSpeed = backgroundSpeed
+        )
+
+        drawBlockers(
+            gameState = gameState,
+            blockersState = blockersState,
+            backgroundSpeed = backgroundSpeed,
+            onDraw = { blockerRects ->
+                viewModel.updateBlockerRects(blockerRects)
+            }
+        )
+
+        drawCar(
+            carState = carState,
+            carOffsetIndex = carOffsetIndex,
+            onDraw = { carRect ->
+                viewModel.updateCarRect(carRect)
+            }
+        )
+
+    }
+}
+
+private fun DrawScope.drawBlockers(
+    gameState: GameState,
+    blockersState: BlockersState,
+    backgroundSpeed: Int,
+    onDraw: (List<Rect>) -> Unit,
+) {
+    if (!gameState.isStopped()) {
+        if (!gameState.isPaused())
+            blockersState.move(velocity = backgroundSpeed)
+        val rects = blockersState.draw(drawScope = this)
+        onDraw(rects)
+    }
+}
+
+private fun DrawScope.drawCar(
+    carState: CarState,
+    carOffsetIndex: Float,
+    onDraw: (Rect) -> Unit
+) {
+    val rect = carState.draw(drawScope = this, offsetIndex = carOffsetIndex)
+    onDraw(rect)
+}
+
+private fun DrawScope.drawBackground(
+    gameState: GameState,
+    backgroundState: BackgroundState,
+    backgroundSpeed: Int
+) {
+    if (!gameState.isPaused())
+        backgroundState.move(velocity = backgroundSpeed)
+    backgroundState.draw(drawScope = this)
+}
+
+@Composable
+fun BoxScope.TopActionButtons(
+    gameState: GameState,
+    onSettingsClick: () -> Unit,
+    onPauseGameState: () -> Unit,
+    onResetGameScore: () -> Unit,
+    isDevMode: Boolean,
+) {
+    Column(
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(
+            onClick = onSettingsClick,
+        ) {
+            Icon(
+                painter = rememberVectorPainter(image = Icons.Filled.Settings),
+                contentDescription = "settings"
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = "Settings")
+        }
+        Button(
+            onClick = onPauseGameState,
+            modifier = Modifier
+        ) {
+            Icon(
+                painter = rememberVectorPainter(image = Icons.Filled.Pause),
+                contentDescription = "pause"
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = "Pause")
+        }
+        if (isDevMode) {
+            Button(onClick = onResetGameScore) {
+                Text(text = "reset")
+            }
+        }
     }
 }
