@@ -69,12 +69,24 @@ private fun NavGraphBuilder.gameScreen(navController: NavHostController) {
             }
         }
 
+        val gameScore by viewModel.gameScore.collectAsState()
+        val highscore by viewModel.highscore.collectAsState()
+        val acceleration by viewModel.acceleration.collectAsState()
+        val movementInput by viewModel.movementInput.collectAsState()
+
         RacingGameScreen(
-            viewModel = viewModel,
-            isDevMode = true,
+            isDevMode = { true },
             onSettingsClick = {
                 navController.navigate(Destinations.Settings.route)
             },
+            gameScore = { gameScore },
+            highscore = { highscore },
+            acceleration = { acceleration },
+            movementInput = { movementInput },
+            onGameScoreIncrease = viewModel::increaseGameScore,
+            onResetGameScore = viewModel::resetGameScore,
+            onBlockerRectsDraw = viewModel::updateBlockerRects,
+            onCarRectDraw = viewModel::updateCarRect,
             modifier = Modifier.fillMaxSize()
         )
     }

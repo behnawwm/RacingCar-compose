@@ -10,7 +10,6 @@ import com.example.racingcar.ui.game.state.BackgroundState
 import com.example.racingcar.ui.game.state.BlockersState
 import com.example.racingcar.ui.game.state.CarState
 import com.example.racingcar.ui.game.state.GameState
-import com.example.racingcar.ui.viewmodel.MainViewModel
 
 
 @Composable
@@ -19,10 +18,11 @@ fun RacingGameCanvas(
     backgroundState: BackgroundState,
     backgroundSpeed: Int,
     blockersState: BlockersState,
-    viewModel: MainViewModel,
     carState: CarState,
     carOffsetIndex: Float,
-    modifier: Modifier = Modifier
+    onBlockerRectsDraw: (List<Rect>) -> Unit,
+    onCarRectDraw: (Rect) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Canvas(modifier = modifier) {
         Log.d("mamad", "size: $size")
@@ -36,17 +36,13 @@ fun RacingGameCanvas(
             gameState = gameState,
             blockersState = blockersState,
             backgroundSpeed = backgroundSpeed,
-            onDraw = { blockerRects ->
-                viewModel.updateBlockerRects(blockerRects)
-            }
+            onDraw = onBlockerRectsDraw
         )
 
         drawCar(
             carState = carState,
             carOffsetIndex = carOffsetIndex,
-            onDraw = { carRect ->
-                viewModel.updateCarRect(carRect)
-            }
+            onDraw = onCarRectDraw
         )
 
     }
