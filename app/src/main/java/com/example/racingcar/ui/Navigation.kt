@@ -3,9 +3,11 @@ package com.example.racingcar.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -13,9 +15,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.racingcar.ui.game.RacingCar
+import com.example.racingcar.ui.game.RacingGame
 import com.example.racingcar.ui.settings.settings
 import com.example.racingcar.ui.viewmodel.MainViewModel
+import com.example.racingcar.utils.vibrateError
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
@@ -58,7 +61,15 @@ private fun NavGraphBuilder.settingsScreen() {
 private fun NavGraphBuilder.gameScreen(navController: NavHostController) {
     composable(Destinations.Game.route) {
         val viewModel = hiltViewModel<MainViewModel>()
-        RacingCar(
+
+        val context = LocalContext.current
+        LaunchedEffect(context) {
+            viewModel.vibrateSharedFlow.collect {
+                context.vibrateError()
+            }
+        }
+
+        RacingGame(
             viewModel = viewModel,
             isDevMode = true,
             onSettingsClick = {

@@ -6,6 +6,5 @@ import kotlinx.coroutines.flow.Flow
 class GetHighscoreUseCase(
     private val highscoreRepository: HighscoreRepository,
 ) {
-    suspend fun execute(): Flow<Int> = highscoreRepository.getHighScore()
-
+    fun execute(): Flow<Int> = highscoreRepository.getHighScore()
 }
