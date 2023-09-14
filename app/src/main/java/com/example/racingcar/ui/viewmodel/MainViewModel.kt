@@ -36,7 +36,7 @@ class MainViewModel @Inject constructor(
     private val _acceleration = MutableStateFlow(AccelerationData(0f, 0f, 0f))
     val acceleration = _acceleration.asStateFlow()
 
-    private val _movementInput = MutableStateFlow(MovementInput.Gestures)
+    private val _movementInput = MutableStateFlow(MovementInput.SwipeGestures)
     val movementInput = _movementInput.asStateFlow()
 
     private val _gameScore = MutableStateFlow(INITIAL_GAME_SCORE)

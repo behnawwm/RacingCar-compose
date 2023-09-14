@@ -17,7 +17,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.racingcar.models.MovementInput.Accelerometer
-import com.example.racingcar.models.MovementInput.Gestures
 import com.example.racingcar.ui.theme.RacingCarTheme
 import com.example.racingcar.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,13 +52,8 @@ class MainActivity : ComponentActivity(), SensorEventListener {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.movementInput.collect {
                     when (it) {
-                        Gestures -> {
-                            unregisterAccelerometer()
-                        }
-
-                        Accelerometer -> {
-                            registerAccelerometer()
-                        }
+                        Accelerometer -> registerAccelerometer()
+                        else -> unregisterAccelerometer()
                     }
                 }
             }

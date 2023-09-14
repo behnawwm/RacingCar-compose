@@ -27,7 +27,8 @@ import com.example.racingcar.R
 import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.MovementInput
 import com.example.racingcar.models.MovementInput.Accelerometer
-import com.example.racingcar.models.MovementInput.Gestures
+import com.example.racingcar.models.MovementInput.SwipeGestures
+import com.example.racingcar.models.MovementInput.TapGestures
 import com.example.racingcar.ui.game.state.BackgroundState
 import com.example.racingcar.ui.game.state.BlockersState
 import com.example.racingcar.ui.game.state.CarState
@@ -105,17 +106,21 @@ fun RacingGameScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .then(
-                    when (movementInput()) {
-                        Gestures -> Modifier.then(
-                            if (gameState.isRunning())
+                    if (gameState.isRunning())
+                        when (movementInput()) {
+                            TapGestures ->
                                 Modifier.detectCarPositionByPointerInput(maxWidth = maxWidth.value.toInt()) { position ->
                                     carState.moveWithTapGesture(position)
                                 }
-                            else Modifier
-                        )
 
-                        Accelerometer -> Modifier
-                    }
+                            SwipeGestures -> Modifier.detectSwipeDirection(maxWidth.value.toInt()) { swipeDirection ->
+                                carState.moveWithSwipeGesture(swipeDirection)
+                            }
+
+                            Accelerometer -> Modifier
+                        }
+                    else
+                        Modifier
                 )
         ) {
             RacingGameCanvas(
