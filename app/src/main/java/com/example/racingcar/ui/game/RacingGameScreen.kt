@@ -16,18 +16,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
-import com.example.racingcar.R
 import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.MovementInput
 import com.example.racingcar.models.MovementInput.Accelerometer
 import com.example.racingcar.models.MovementInput.SwipeGestures
 import com.example.racingcar.models.MovementInput.TapGestures
+import com.example.racingcar.models.RacingResourcePack
 import com.example.racingcar.ui.game.state.BackgroundState
 import com.example.racingcar.ui.game.state.BlockersState
 import com.example.racingcar.ui.game.state.CarState
@@ -42,6 +43,7 @@ fun RacingGameScreen(
     highscore: () -> Int,
     acceleration: () -> AccelerationData,
     movementInput: () -> MovementInput,
+    resourcePack: () -> RacingResourcePack,
     isDevMode: () -> Boolean,
     onSettingsClick: () -> Unit,
     onGameScoreIncrease: () -> Unit,
@@ -51,21 +53,36 @@ fun RacingGameScreen(
     modifier: Modifier = Modifier,
 ) {
     // resources
-    val backgroundImageBitmap = ImageBitmap.imageResource(id = R.drawable.bg_road_night)
-    val carImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_car)
-    val blockImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_block_night)
+    val carImageDrawableBitmap = ImageBitmap.imageResource(resourcePack().carImageDrawable)
+    val backgroundImageBitmap = ImageBitmap.imageResource(resourcePack().backgroundImageDrawable)
+    val blockerImageBitmap = ImageBitmap.imageResource(resourcePack().blockerImageDrawable)
 
     // states
-    val gameState = GameState()
-    val carState = CarState(image = carImageBitmap)
-    val blockersState = BlockersState(image = blockImageBitmap)
-    val backgroundState = BackgroundState(
-        image = backgroundImageBitmap,
-        onGameScoreIncrease = {
-            if (gameState.isRunning())
-                onGameScoreIncrease()
-        }
-    )
+    val gameState by remember {
+        mutableStateOf(GameState())
+    }
+    val carState by remember {
+        mutableStateOf(
+            CarState(image = carImageDrawableBitmap)
+        )
+    }
+
+    val blockersState by remember {
+        mutableStateOf(
+            BlockersState(image = blockerImageBitmap)
+        )
+    }
+    val backgroundState by remember {
+        mutableStateOf(
+            BackgroundState(
+                image = backgroundImageBitmap,
+                onGameScoreIncrease = {
+                    if (gameState.isRunning())
+                        onGameScoreIncrease()
+                }
+            )
+        )
+    }
 
     val backgroundSpeed by remember {
         derivedStateOf {
@@ -94,7 +111,7 @@ fun RacingGameScreen(
         }
 
         val carOffsetIndex by animateFloatAsState(
-            targetValue = carState.position.fromLeftOffsetIndex(),
+            targetValue = carState.getPosition().fromLeftOffsetIndex(),
             label = "car offset index",
             animationSpec = spring(stiffness = CAR_MOVEMENT_SPRING_ANIMATION_STIFFNESS)
         )

@@ -22,8 +22,8 @@ import com.example.racingcar.utils.Constants.LANE_COUNT
 import com.example.racingcar.utils.Constants.STREET_SIDE_PERCENTAGE_EACH
 
 data class CarState(
-    val image: ImageBitmap,
-    var position: CarPosition = Middle
+    private val image: ImageBitmap,
+    private var position: CarPosition = Middle
 ) {
 
     private var rotationDirection: RotationDirection? = null
@@ -131,5 +131,7 @@ data class CarState(
             Middle
         }
     }
+
+    fun getPosition() = position
 
 }

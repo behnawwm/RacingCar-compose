@@ -8,6 +8,8 @@ import com.example.racingcar.domain.usecase.GetHighscoreUseCase
 import com.example.racingcar.domain.usecase.SaveHighscoreUseCase
 import com.example.racingcar.models.AccelerationData
 import com.example.racingcar.models.MovementInput
+import com.example.racingcar.models.NightRacingResourcePack
+import com.example.racingcar.models.RacingResourcePack
 import com.example.racingcar.utils.Constants.COLLISION_SCORE_PENALTY
 import com.example.racingcar.utils.Constants.DEFAULT_ACCELEROMETER_SENSITIVITY
 import com.example.racingcar.utils.Constants.INITIAL_GAME_SCORE
@@ -44,6 +46,9 @@ class MainViewModel @Inject constructor(
 
     private val _highscore = MutableStateFlow(0)
     val highscore = _highscore.asStateFlow()
+
+    private val _resourcePack = MutableStateFlow<RacingResourcePack>(NightRacingResourcePack())
+    val resourcePack = _resourcePack.asStateFlow()
 
     val vibrateSharedFlow = MutableSharedFlow<Unit>(replay = 1)
 

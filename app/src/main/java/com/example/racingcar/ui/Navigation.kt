@@ -72,6 +72,7 @@ private fun NavGraphBuilder.gameScreen(navController: NavHostController, viewMod
         val highscore by viewModel.highscore.collectAsState()
         val acceleration by viewModel.acceleration.collectAsState()
         val movementInput by viewModel.movementInput.collectAsState()
+        val resourcePack by viewModel.resourcePack.collectAsState()
 
         RacingGameScreen(
             isDevMode = { true },
@@ -80,6 +81,7 @@ private fun NavGraphBuilder.gameScreen(navController: NavHostController, viewMod
             },
             gameScore = { gameScore },
             highscore = { highscore },
+            resourcePack = { resourcePack },
             acceleration = { acceleration },
             movementInput = { movementInput },
             onGameScoreIncrease = viewModel::increaseGameScore,
