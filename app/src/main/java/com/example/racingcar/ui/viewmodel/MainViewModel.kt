@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.racingcar.R
 import com.example.racingcar.domain.usecase.GetHighscoreUseCase
 import com.example.racingcar.domain.usecase.SaveHighscoreUseCase
-import com.example.racingcar.models.AccelerationData
-import com.example.racingcar.models.MovementInput
-import com.example.racingcar.models.NightRacingResourcePack
-import com.example.racingcar.models.RacingResourcePack
+import com.example.racingcar.ui.models.AccelerationData
+import com.example.racingcar.ui.models.MovementInput
+import com.example.racingcar.ui.models.NightRacingResourcePack
+import com.example.racingcar.ui.models.RacingResourcePack
 import com.example.racingcar.utils.Constants.COLLISION_SCORE_PENALTY
 import com.example.racingcar.utils.Constants.DEFAULT_ACCELEROMETER_SENSITIVITY
 import com.example.racingcar.utils.Constants.INITIAL_GAME_SCORE

@@ -1,4 +1,4 @@
-package com.example.racingcar.models
+package com.example.racingcar.ui.models
 
 enum class CarPosition {
     Right {

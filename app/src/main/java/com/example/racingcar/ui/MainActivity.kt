@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.racingcar.models.MovementInput.Accelerometer
+import com.example.racingcar.ui.models.MovementInput.Accelerometer
 import com.example.racingcar.ui.theme.RacingCarTheme
 import com.example.racingcar.ui.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint

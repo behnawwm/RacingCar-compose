@@ -3,7 +3,7 @@ package com.example.racingcar.ui.game
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import com.example.racingcar.models.CarPosition
+import com.example.racingcar.ui.models.CarPosition
 import com.example.racingcar.utils.Constants
 
 @OptIn(ExperimentalComposeUiApi::class)

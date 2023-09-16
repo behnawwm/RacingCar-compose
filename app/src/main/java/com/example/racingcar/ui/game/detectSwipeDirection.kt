@@ -9,7 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.pointerInput
-import com.example.racingcar.models.SwipeDirection
+import com.example.racingcar.ui.models.SwipeDirection
 import com.example.racingcar.utils.Constants
 import kotlin.math.abs
 

@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import com.example.racingcar.models.MovementInput
+import com.example.racingcar.ui.models.MovementInput
 
 @Composable
 fun MovementInputRow(
