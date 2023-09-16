@@ -28,7 +28,7 @@ fun GameStateIndicator(gameState: GameState, onStartClicked: () -> Unit) {
             .background(Color.White)
             .padding(16.dp)
     ) {
-        Text("Game is ${gameState.status}", color = Color.Black)
+        Text("Game is ${gameState.getStatusName()}", color = Color.Black)
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onStartClicked) {
             Text(text = "Start!")

@@ -16,9 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
@@ -58,26 +56,16 @@ fun RacingGameScreen(
     val blockImageBitmap = ImageBitmap.imageResource(id = R.drawable.ic_block_night)
 
     // states
-    var gameState by remember {
-        mutableStateOf(GameState())
-    }
-    val carState by remember {
-        mutableStateOf(CarState(image = carImageBitmap))
-    }
-    val blockersState by remember {
-        mutableStateOf(BlockersState(image = blockImageBitmap))
-    }
-    val backgroundState by remember {
-        mutableStateOf(
-            BackgroundState(
-                image = backgroundImageBitmap,
-                onGameScoreIncrease = {
-                    if (gameState.isRunning())
-                        onGameScoreIncrease()
-                }
-            )
-        )
-    }
+    val gameState = GameState()
+    val carState = CarState(image = carImageBitmap)
+    val blockersState = BlockersState(image = blockImageBitmap)
+    val backgroundState = BackgroundState(
+        image = backgroundImageBitmap,
+        onGameScoreIncrease = {
+            if (gameState.isRunning())
+                onGameScoreIncrease()
+        }
+    )
 
     val backgroundSpeed by remember {
         derivedStateOf {
@@ -150,7 +138,7 @@ fun RacingGameScreen(
             ) {
                 GameStateIndicator(
                     gameState = gameState,
-                    onStartClicked = { gameState = GameState(GameState.Status.RUNNING) }
+                    onStartClicked = { gameState.run() }
                 )
             }
 
@@ -163,7 +151,7 @@ fun RacingGameScreen(
             )
             TopActionButtons(
                 onSettingsClick = onSettingsClick,
-                onPauseGameState = { gameState = GameState(GameState.Status.PAUSED) },
+                onPauseGameState = { gameState.pause() },
                 onResetGameScore = onResetGameScore,
                 isDevMode = isDevMode(),
                 modifier = Modifier.fillMaxWidth()
