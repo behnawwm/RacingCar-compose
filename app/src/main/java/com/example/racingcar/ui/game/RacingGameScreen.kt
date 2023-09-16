@@ -1,5 +1,6 @@
 package com.example.racingcar.ui.game
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -148,7 +149,7 @@ fun RacingGameScreen(
                 modifier = Modifier.fillMaxSize(),
             )
 
-            androidx.compose.animation.AnimatedVisibility(
+            AnimatedVisibility(
                 visible = gameState.isStopped() || gameState.isPaused(),
                 modifier = Modifier
                     .align(Alignment.Center)
