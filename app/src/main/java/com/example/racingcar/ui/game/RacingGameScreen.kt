@@ -61,24 +61,29 @@ fun RacingGameScreen(
     var gameState by remember {
         mutableStateOf(GameState())
     }
+    val carState by remember {
+        mutableStateOf(CarState(image = carImageBitmap))
+    }
+    val blockersState by remember {
+        mutableStateOf(BlockersState(image = blockImageBitmap))
+    }
+    val backgroundState by remember {
+        mutableStateOf(
+            BackgroundState(
+                image = backgroundImageBitmap,
+                onGameScoreIncrease = {
+                    if (gameState.isRunning())
+                        onGameScoreIncrease()
+                }
+            )
+        )
+    }
 
     val backgroundSpeed by remember {
         derivedStateOf {
             (gameScore() / Constants.GAME_SCORE_TO_VELOCITY_RATIO) + Constants.INITIAL_VELOCITY
         }
     }
-    val backgroundState =
-        BackgroundState(
-            image = backgroundImageBitmap,
-            onGameScoreIncrease = {
-                if (gameState.isRunning())
-                    onGameScoreIncrease()
-            }
-        )
-    val carState = CarState(image = carImageBitmap)
-
-    val blockersState = BlockersState(image = blockImageBitmap)
-
 
     // ticker
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
