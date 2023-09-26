@@ -7,7 +7,7 @@ A racing car game implementation using Jetpack Compose
 - [x] Collision detection
 - [x] Highscore
 - [x] Sounds
-- [ ] Speedometer
+- [ ] New game modes (e.g. endless, mission)
 - [ ] Dynamic game setting
 - [ ] power-ups (e.g. booster, shield)
 - [ ] Achievements
